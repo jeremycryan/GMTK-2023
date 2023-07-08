@@ -74,7 +74,7 @@ class Grid:
         while tx <= max_tx:
             ty = min_ty
             while ty <= max_ty:
-                if not self.tile_is_solid(self.get_tile_at_tile((tx, ty))):
+                if only_solid and not self.tile_is_solid(self.get_tile_at_tile((tx, ty))):
                     continue
                 x, y = self.tile_to_world((tx, ty))
                 width, height = c.TILE_WIDTH, c.TILE_HEIGHT
