@@ -2,7 +2,7 @@ import random
 
 import pygame
 
-from grid import Grid
+from grid import Grid, Tile
 from zombie import Zombie
 
 
@@ -26,9 +26,10 @@ class Frame:
 
     def draw(self, surface, offset=(0, 0)):
         surface.fill((0, 0, 0))
-        self.grid.draw(surface, offset)
+        self.grid.draw(surface, offset, only=[Tile.AIR])
         for zombie in self.zombies:
             zombie.draw(surface, offset)
+        self.grid.draw(surface, offset, only=[Tile.GROUND])
 
     def next_frame(self):
         return Frame(self.game)

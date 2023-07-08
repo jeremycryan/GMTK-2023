@@ -13,9 +13,9 @@ TILE_SIZE = TILE_WIDTH, TILE_HEIGHT
 # Physics parameters
 GRAVITY = 300                   # pixels/s^2
 DRAG = 0.1                      # 1/s
-RESTITUTION = 0.5               # unitless
+RESTITUTION = 0.15               # unitless
 FRICTION = 0.7                  # unitless
-V_MIN_BOUNCE = 50               # pixels/s
+V_MIN_BOUNCE = 25               # pixels/s
 
 # Zombie parameters
-ZOMBIE_SPEED = 50              # pixels/s
+ZOMBIE_SPEED = 5              # pixels/s

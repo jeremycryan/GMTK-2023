@@ -39,7 +39,7 @@ class ImageManager:
         ImageManager.sounds = {}
 
     @staticmethod
-    def load(path):
+    def load(path, scale_by=1):
         """
         Loads a surface from file or from cache
         :param path: The path of the image
@@ -49,6 +49,10 @@ class ImageManager:
         if path in ImageManager.sounds:
             return ImageManager.sounds[path]
         sound = pygame.image.load(path).convert_alpha()
+        if scale_by != 1:
+            w = int(sound.get_width()*scale_by)
+            h = int(sound.get_height()*scale_by)
+            sound = pygame.transform.scale(sound, (w, h))
         ImageManager.sounds[path] = sound
         return sound
 

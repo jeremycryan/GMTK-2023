@@ -106,7 +106,7 @@ class Grid:
     def update(self, dt, events):
         pass
 
-    def draw(self, dest, offset=(0, 0)):
+    def draw(self, dest, offset=(0, 0), only=None):
         px = 0  # probe spots on the screen for what tile should display
         while px <= c.WINDOW_WIDTH + c.TILE_WIDTH:
             py = 0
@@ -119,13 +119,14 @@ class Grid:
                 if tile_pos[0] >= 0 and tile_pos[0] < len(self.tiles[0]):
                     if tile_pos[1] >= 0 and tile_pos[1] < len(self.tiles):
                         tile_type = self.tiles[tile_pos[1]][tile_pos[0]]
+                if only is not None and tile_type not in only:
+                    py += c.TILE_HEIGHT
+                    continue
 
                 tile_sprite = self.tile_surfs[tile_type] if tile_type in self.tile_surfs else Tile.GROUND
                 dest.blit(tile_sprite, self.snap_up((px, py)))
                 py += c.TILE_HEIGHT
             px += c.TILE_WIDTH
-
-
         pass
 
 

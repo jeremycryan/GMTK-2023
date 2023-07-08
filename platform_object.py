@@ -31,9 +31,9 @@ class PlatformObject:
     def draw(self, surface, offset):
         """ Render placeholder graphics """
         if self.ballistic:
-            pygame.draw.circle(surface, (255, 0, 0), (self.x + offset[0], self.y + offset[1]), self.r)
+            pygame.draw.circle(surface, (255, 0, 0), (self.x + offset[0], self.y + offset[1]), self.r, 2)
         else:
-            pygame.draw.rect(surface, (255, 0, 0), self.get_rect(offset))
+            pygame.draw.rect(surface, (255, 0, 0), self.get_rect(offset), 2)
 
     def ballistic_update(self, dt):
         """ Update velocity and position via continuous physics """
@@ -80,7 +80,22 @@ class PlatformObject:
                 # Custom behavior depending on tile type
                 tile_type = self.frame.grid.get_tile_at(tile.center)
                 self.on_collision(tile_type=tile_type, tile_rect=tile)
-        self.ballistic = ballistic
+        self.set_ballistic(ballistic)
+
+    def set_ballistic(self, new_val):
+        if new_val == self.ballistic:
+            return
+        self.ballistic = new_val
+        if new_val == True:
+            self.on_become_ballistic()
+        else:
+            self.on_become_grounded()
+
+    def on_become_ballistic(self):
+        pass
+
+    def on_become_grounded(self):
+        pass
 
     def on_collision(self, tile_type, tile_rect):
         """ Override for any custom tile collision behavior """
