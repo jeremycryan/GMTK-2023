@@ -50,11 +50,11 @@ class Frame(FrameBase):
 
     def load_zombies(self):
         if self.level == 1:
-            for i in range(5):
+            for i in range(4):
                 spawner = self.grid.tile_to_world(self.zombie_spawners[i % len(self.zombie_spawners)])
                 self.spawn_queue.append(Zombie(self, *spawner))
         elif self.level == 2:
-            for i in range(5):
+            for i in range(6):
                 spawner = self.grid.tile_to_world(self.zombie_spawners[i % len(self.zombie_spawners)])
                 self.spawn_queue.append(Zombie(self, *spawner))
 
@@ -69,12 +69,14 @@ class Frame(FrameBase):
                 self.spawn_count += 1
             elif not len(self.zombies):
                 self.done = True
+                self.level += 1
                 # TODO: game over ("Level Complete") screen
                 return
 
         for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN and len(self.zombies) < 3:
-                self.zombies.append(Zombie(self, *event.pos))
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                self.level += 1
+                self.done = True
 
         self.grid.update(dt, events)
         for hero in self.heros:
@@ -90,7 +92,7 @@ class Frame(FrameBase):
             projectile.update(dt, events)
         self.background.update(dt, events)
         if not len(self.heros):
-            self.level += 1
+            # TODO: level up ("Game Over...try again?") screen
             self.done = True
 
     def draw(self, surface, offset=(0, 0)):
