@@ -16,12 +16,13 @@ class Zombie(PlatformObject):
     BALLISTIC = 2
     GRABBED = 3
 
-
     def __init__(self, frame, x, y):
         super().__init__(frame, x, y, 64, 64, r=32)
 
         self.sprite = Sprite(12)
         self.state = Zombie.IDLE
+        self.hp = 2
+        self.death_time = 0.5
         self.grabbed = False
         scale_by = 0.5
         fling = Animation(ImageManager.load("assets/images/ZR Throw temp.png", scale_by=scale_by), (1, 1), 1)
@@ -52,11 +53,15 @@ class Zombie(PlatformObject):
         if self.ballistic:
             self.on_become_ballistic()
 
-
-
     def update(self, dt, events):
         """ Walk around randomly once zombie is grounded """
         super().update(dt, events)
+        if self.hp <= 0:
+            self.grabbed = False
+            self.death_time -= dt
+            if self.death_time <= 0:
+                self.frame.zombies.remove(self)
+            return
         if self.grabbed:
             self.state = Zombie.GRABBED
             self.ballistic = False
@@ -79,6 +84,8 @@ class Zombie(PlatformObject):
         super().draw(surface, offset)
         my_surf = self.sprite.get_image()
         direction = "left" if self.vx < 0 else "right"
+        if self.death_time <= 0:
+            pass  # TODO: death animation
         if self.state == Zombie.BALLISTIC and not self.grabbed:
             if self.vy < 0 and self.agape:
                 self.sprite.start_animation(f"fling_{direction}", restart_if_active=False)
@@ -104,9 +111,11 @@ class Zombie(PlatformObject):
             self.sprite.start_animation("falling_left")
         self.state = Zombie.BALLISTIC
 
-
     def on_become_grounded(self):
         super().on_become_grounded()
         if self.grabbed:
             return
         self.state = Zombie.IDLE
+
+    def hit(self, damage):
+        self.hp -= damage
