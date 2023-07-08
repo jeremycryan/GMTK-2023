@@ -53,7 +53,7 @@ class PlatformObject:
         ballistic = True
         for tile in tiles:
             # Check for tile collision
-            d = self.collide_circle(tile) if self.ballistic else self.collide_box(tile)
+            d = self.collide(tile)
             if d:
                 # Correct penetration
                 self.x -= d[0]
@@ -62,12 +62,13 @@ class PlatformObject:
                 norm = math.sqrt(d[0] ** 2 + d[1] ** 2)
                 if norm:
                     dv = d[0]/norm * self.vx + d[1]/norm * self.vy
-                    self.vx -= d[0] / norm * dv
-                    self.vy -= d[1] / norm * dv
-                    self.vx *= FRICTION
-                    self.vy *= FRICTION
-                    self.vx -= d[0] / norm * dv * RESTITUTION
-                    self.vy -= d[1] / norm * dv * RESTITUTION
+                    if dv >= 0:
+                        self.vx -= d[0] / norm * dv
+                        self.vy -= d[1] / norm * dv
+                        self.vx *= FRICTION
+                        self.vy *= FRICTION
+                        self.vx -= d[0] / norm * dv * RESTITUTION
+                        self.vy -= d[1] / norm * dv * RESTITUTION
                 # Check if grounded
                 if self.ballistic and d[1] > 0 and (self.vy ** 2 + self.vx ** 2) < V_MIN_BOUNCE ** 2:
                     # Collided from above, with resulting velocity below a threshold
@@ -109,6 +110,13 @@ class PlatformObject:
         """ Pygame rect for bounding box """
         dx, dy = self.get_tile_range()
         return pygame.Rect(self.x - dx + offset[0], self.y - dy + offset[1], 2 * dx, 2 * dy)
+
+    def collide(self, rect):
+        """ Automatically choose the correct collision function """
+        if self.ballistic:
+            return self.collide_circle(rect)
+        else:
+            return self.collide_box(rect)
 
     def collide_circle(self, rect):
         """ Return penetration vector from self to rect if collision occurs, else None """
