@@ -2,6 +2,7 @@ import random
 
 import pygame
 
+from background import Background
 from grid import Grid, Tile
 from hero import Hero
 from toss_ui import TossUI
@@ -19,6 +20,7 @@ class Frame:
         self.heros = [Hero(self, 900, 450)]
         self.projectiles = []
         self.toss_ui = TossUI(self)
+        self.background = Background()
 
     def update(self, dt, events):
         self.toss_ui.update(dt, events)
@@ -39,9 +41,11 @@ class Frame:
         self.zombies += grabbed
         for projectile in self.projectiles[:]:
             projectile.update(dt, events)
+        self.background.update(dt, events)
 
     def draw(self, surface, offset=(0, 0)):
-        surface.fill((100, 0, 0))
+        #surface.fill((100, 0, 0))
+        self.background.draw(surface, offset)
         self.grid.draw(surface, offset, only=[Tile.AIR])
         for hero in self.heros:
             hero.draw(surface, offset)
