@@ -21,7 +21,7 @@ FRICTION = 10                   # grounded friction time constant in 1/s
 V_MIN_SLIDE = 5                 # minimum sliding velocity in pixels/s
 
 # Zombie parameters
-ZOMBIE_SPEED = 5                # zombie walking speed in pixels/s
+ZOMBIE_SPEED = 10               # zombie walking speed in pixels/s
 
 # Hero parameters
 RECOIL = 50                     # gun knockback in pixels/s

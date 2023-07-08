@@ -22,7 +22,7 @@ class Zombie(PlatformObject):
         self.sprite = Sprite(12)
         self.state = Zombie.IDLE
         self.hp = 2
-        self.death_time = 0.5
+        self.death_time = 0.2
         self.grabbed = False
         scale_by = 0.5
         fling = Animation(ImageManager.load("assets/images/ZR Throw temp.png", scale_by=scale_by), (1, 1), 1)
@@ -67,7 +67,7 @@ class Zombie(PlatformObject):
             self.ballistic = False
             self.vx = 0
             self.vy = 0
-            self.x, self.y = pygame.mouse.get_pos()
+            #self.x, self.y = pygame.mouse.get_pos()
 
         if not self.ballistic and not self.grabbed:
             if self.vx > 0:
