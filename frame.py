@@ -17,6 +17,7 @@ class Frame:
         self.grid = Grid()
         self.zombies = []
         self.heros = [Hero(self, 900, 450)]
+        self.projectiles = []
         self.toss_ui = TossUI(self)
 
     def update(self, dt, events):
@@ -36,6 +37,8 @@ class Frame:
                 grabbed.append(zombie)
             zombie.update(dt, events)
         self.zombies += grabbed
+        for projectile in self.projectiles[:]:
+            projectile.update(dt, events)
 
     def draw(self, surface, offset=(0, 0)):
         surface.fill((100, 0, 0))
@@ -44,6 +47,8 @@ class Frame:
             hero.draw(surface, offset)
         for zombie in self.zombies:
             zombie.draw(surface, offset)
+        for projectile in self.projectiles:
+            projectile.draw(surface, offset)
         self.grid.draw(surface, offset, only=[Tile.GROUND])
         self.toss_ui.draw(surface, offset)
 

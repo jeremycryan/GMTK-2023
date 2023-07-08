@@ -11,6 +11,7 @@ TILE_HEIGHT = 64
 TILE_SIZE = TILE_WIDTH, TILE_HEIGHT
 
 # Physics parameters
+<<<<<<< HEAD
 GRAVITY = 800                   # pixels/s^2
 DRAG = 0.1                      # 1/s
 TERMINAL_VELOCITY = 500
@@ -19,11 +20,11 @@ HORIZONTAL_RESTITUTION = 0.2
 TANGENTIAL_RESTITUTION = 0.7     # unitless
 V_MIN_BOUNCE = 25               # pixels/s
 
-FRICTION = 10                   # 1/s
-V_MIN_SLIDE = 5                 # pixels/s
+FRICTION = 10                   # grounded friction time constant in 1/s
+V_MIN_SLIDE = 5                 # minimum sliding velocity in pixels/s
 
 # Zombie parameters
-ZOMBIE_SPEED = 10              # pixels/s
+ZOMBIE_SPEED = 10               # zombie walking speed in pixels/s
 
 # Hero parameters
 RECOIL = 50                     # pixels/s
@@ -41,3 +42,7 @@ RIGHT = (1, 0)
 DOWN_LEFT = (-1, 1)
 DOWN = (0, 1)
 DOWN_RIGHT = (1, 0)
+
+# Projectile parameters
+BULLET_SPEED = 500              # bullet speed in pixels/s
+BULLET_FORCE = 0.3              # bullet mass to zombie mass ratio
