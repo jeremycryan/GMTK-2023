@@ -3,8 +3,11 @@ import math
 import pygame.draw
 
 from constants import *
+from image_manager import ImageManager
 from platform_object import PlatformObject
 from projectile import Projectile
+
+from pyracy.sprite_tools import Sprite, Animation
 
 
 class Hero(PlatformObject):
@@ -17,8 +20,32 @@ class Hero(PlatformObject):
         self.target = None
         self.t = 0
 
+        self.sprite = Sprite(12)
+        idle = Animation(ImageManager.load("assets/images/Man Idle temp.png", 0.5), (1, 1), 1)
+        idle_right = Animation(ImageManager.load("assets/images/Man Idle temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        self.sprite.add_animation({
+            "idle_left":idle,
+            "idle_right":idle_right,
+        })
+        self.sprite.start_animation("idle_left")
+
+        self.arm_sprite = Sprite(12)
+        aiming = Animation(ImageManager.load("assets/images/Man Arm Idle Temp.png", 0.5), (1, 1), 1)
+        aiming_right = Animation(ImageManager.load("assets/images/Man Arm Idle Temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        standby = Animation(ImageManager.load("assets/images/man arm standby temp.png", 0.5), (1, 1), 1)
+        standby_right = Animation(ImageManager.load("assets/images/man arm standby temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        self.arm_sprite.add_animation({
+            "aiming_left": aiming,
+            "aiming_right": aiming_right,
+            "standby_left": standby,
+            "standby_right": standby_right,
+        })
+        self.arm_sprite.start_animation("aiming_left")
+
     def update(self, dt, events):
         super().update(dt, events)
+        self.sprite.update(dt, events)
+        self.arm_sprite.update(dt, events)
         self.t += dt
         # Select target
         self.target, self.target_angle = self.get_zombie()
@@ -64,6 +91,10 @@ class Hero(PlatformObject):
         super().draw(surface, offset)
         x, y = self.raycast(self.muzzle(), self.aim_angle)
         pygame.draw.line(surface, (255, 0, 0), (self.muzzle()), (x, y), 2)
+        self.sprite.x = self.x
+        self.sprite.y = self.y
+        self.sprite.draw(surface, offset)
+
 
     def raycast(self, origin, angle, step=1, max_length=1000):
         """ Find first collision of ray with the tilemap """
