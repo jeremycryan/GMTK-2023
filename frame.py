@@ -64,10 +64,11 @@ class Frame(FrameBase):
             if self.spawn_count < len(self.spawn_queue):
                 self.zombies.append(self.spawn_queue[self.spawn_count])
                 self.spawn_count += 1
+            elif not len(self.zombies):
+                self.done = True
+                # TODO: game over ("Level Complete") screen
+                return
 
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN and len(self.zombies) < 3:
-                self.zombies.append(Zombie(self, *event.pos))
         self.grid.update(dt, events)
         for hero in self.heros:
             hero.update(dt, events)
