@@ -1,3 +1,5 @@
+import math
+
 import pygame
 import constants as c
 
@@ -19,6 +21,9 @@ class TossUI:
 
         self.grabbed = None
         self.grab_point = None
+
+        self.mpos = pygame.mouse.get_pos()
+        self.mvel = (0, 0)
 
     def hovered_zombie(self):
         hovered = None
@@ -49,6 +54,9 @@ class TossUI:
         return dt
 
     def update(self, dt, events):
+        mpos = pygame.mouse.get_pos()
+        self.mvel = mpos[0] - self.mpos[0], mpos[1] - self.mpos[1]
+        self.mpos = mpos
         hovered = self.hovered_zombie()
         if hovered:
             pygame.mouse.set_system_cursor(pygame.SYSTEM_CURSOR_HAND)
@@ -66,6 +74,11 @@ class TossUI:
             self.activeness += dt/TossUI.FADE_IN_TIME
             if self.activeness > 1:
                 self.activeness = 1
+            x, y = self.mpos
+            if self.grab_point:
+                dist = math.sqrt((x - self.grab_point[0])**2 + (y - self.grab_point[1])**2)
+                if dist > TossUI.THROW_RADIUS:
+                    self.release_zombie()
         else:
             self.activeness -= dt/TossUI.FADE_IN_TIME
             if self.activeness < 0:
@@ -77,7 +90,13 @@ class TossUI:
         self.grabbed = zombie
         self.active = True
         self.grab_point = pygame.mouse.get_pos()
+        zombie.grabbed = True
 
     def release_zombie(self):
-        self.grabbed = None
+        if self.grabbed:
+            self.grabbed.grabbed = False
+            self.grabbed.vx = self.mvel[0]*7
+            self.grabbed.vy = self.mvel[1]*7
+            self.grabbed.on_become_ballistic()
+            self.grabbed = None
         self.active = False

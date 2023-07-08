@@ -25,8 +25,13 @@ class Frame:
             if event.type == pygame.MOUSEBUTTONDOWN and len(self.zombies)<3:
                 self.zombies.append(Zombie(self, *event.pos))
         self.grid.update(dt, events)
-        for zombie in self.zombies:
+        grabbed = []
+        for zombie in self.zombies[:]:
+            if zombie.grabbed:
+                self.zombies.remove(zombie)
+                grabbed.append(zombie)
             zombie.update(dt, events)
+        self.zombies += grabbed
         pass
 
     def draw(self, surface, offset=(0, 0)):
