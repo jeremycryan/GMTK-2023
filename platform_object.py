@@ -43,9 +43,12 @@ class PlatformObject:
         self.vy += (-DRAG * self.vy + GRAVITY) * dt
 
     def grounded_update(self, dt):
-        """ Update position only via continuous physics """
+        """ Update velocity and position via continuous physics """
         self.x += self.vx * dt
         self.y += self.vy * dt
+        if abs(self.vx) < V_MIN_SLIDE:
+            self.vx = 0
+        self.vx -= FRICTION * self.vx * dt
 
     def collision_update(self):
         """ Collide with any intersecting tiles and determine if object is grounded """
@@ -65,8 +68,8 @@ class PlatformObject:
                     if dv >= 0:
                         self.vx -= d[0] / norm * dv
                         self.vy -= d[1] / norm * dv
-                        self.vx *= FRICTION
-                        self.vy *= FRICTION
+                        self.vx *= TANGENTIAL_RESTITUTION
+                        self.vy *= TANGENTIAL_RESTITUTION
                         self.vx -= d[0] / norm * dv * RESTITUTION
                         self.vy -= d[1] / norm * dv * RESTITUTION
                 # Check if grounded
@@ -147,3 +150,8 @@ class PlatformObject:
             return dx, 0
         else:
             return 0, dy
+
+    def dist(self, pos):
+        dx = pos.x - self.x
+        dy = pos.y - self.y
+        return math.sqrt(dx ** 2 + dy ** 2)
