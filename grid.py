@@ -24,6 +24,10 @@ class Grid:
             ".": Tile.AIR,
             "X": Tile.GROUND,
             "1": Tile.AIR,
+            "2": Tile.AIR,
+            "3": Tile.AIR,
+            "4": Tile.AIR,
+            "5": Tile.AIR,
             "*": Tile.AIR,
         }
 
@@ -50,10 +54,10 @@ class Grid:
             for x, tile in enumerate(row):
                 character = raw[y][x]
                 self.tiles[y][x] = self.char_map[character]
-                if character == "1":
-                    self.spawners.append(self.tile_to_world((x, y)))
+                if character in "12345":
+                    self.spawners.append((x+.5, y+.5))
                 elif character == "*":
-                    self.heros.append(self.tile_to_world((x, y)))
+                    self.heros.append((x+.5, y+.5))
 
 
     def load_tile_surface_array(self):

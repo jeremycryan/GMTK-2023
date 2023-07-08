@@ -41,6 +41,9 @@ HERO_JUMP = 500                 # hero jump speed in pixels/s
 BULLET_SPEED = 1500             # bullet speed in pixels/s
 BULLET_FORCE = 0.05             # bullet mass to zombie mass ratio
 
+# Level parameters
+SPAWN_RATE = 1                  # seconds between zombie spawns
+
 # Direction constants
 UP_LEFT = (-1, -1)
 UP = (0, -1)
