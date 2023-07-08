@@ -139,7 +139,7 @@ class PlatformObject:
         dx2 = rect.right - left
         dy1 = bottom - rect.top
         dy2 = rect.bottom - top
-        if max(dx1, dx2, dy1, dy2) < 0:
+        if min(min(dx1, dx2), min(dy1, dy2)) < 0:
             return None
         dx = dx1 if dx1 < dx2 else -dx2
         dy = dy1 if dy1 < dy2 else -dy2
