@@ -9,7 +9,24 @@ from toss_ui import TossUI
 from zombie import Zombie
 
 
-class Frame:
+class FrameBase:
+    def __init__(self, game):
+        self.game = game
+        self.done = False
+
+    def load(self):
+        pass
+
+    def update(self, dt, events):
+        pass
+
+    def draw(self, surface, offset=(0, 0)):
+        surface.fill((0, 0, 0))
+
+    def next_frame(self):
+        return Frame(self.game)
+
+class Frame(FrameBase):
     def __init__(self, game):
         self.game = game
         self.done = False
