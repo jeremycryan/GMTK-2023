@@ -27,6 +27,7 @@ class Zombie(PlatformObject):
         self.grabbed = False
         self.cooldown = 0
         self.damage = 1
+        self.dead = False
 
         scale_by = 0.5
         fling = Animation(ImageManager.load("assets/images/ZR Throw temp.png", scale_by=scale_by), (1, 1), 1)
@@ -67,10 +68,14 @@ class Zombie(PlatformObject):
 
         self.squash = 1.0
 
+    def die(self):
+        self.grabbed = False
+        self.dead = True
+
     def update(self, dt, events):
         """ Walk around randomly once zombie is grounded """
         super().update(dt, events)
-        if self.hp <= 0:
+        if self.dead:
             self.grabbed = False
             self.death_time -= dt
             if self.death_time <= 0:

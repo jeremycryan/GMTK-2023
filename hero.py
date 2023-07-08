@@ -28,8 +28,8 @@ class Hero(PlatformObject):
         self.destination = None
 
         self.sprite = Sprite(12)
-        idle = Animation(ImageManager.load("assets/images/Man Idle temp.png", 0.5), (1, 1), 1)
-        idle_right = Animation(ImageManager.load("assets/images/Man Idle temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        idle = Animation(ImageManager.load("assets/images/man idle revamp temp.png", 0.5), (1, 1), 1)
+        idle_right = Animation(ImageManager.load("assets/images/man idle revamp temp.png", 0.5), (1, 1), 1, reverse_x=True)
         self.sprite.add_animation({
             "idle_left":idle,
             "idle_right":idle_right,
