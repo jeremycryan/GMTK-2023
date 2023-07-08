@@ -2,7 +2,7 @@ import pygame
 import asyncio
 import sys
 
-import contants as c
+import constants as c
 import frame as f
 from image_manager import ImageManager
 from sound_manager import SoundManager
@@ -52,5 +52,5 @@ class Game:
         return dt, events
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     Game()

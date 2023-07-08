@@ -1,9 +1,10 @@
 import pygame
 import random
-import contants as c
+import constants as c
 from image_manager import ImageManager
 
 import math
+
 
 class Grid:
 
@@ -54,7 +55,7 @@ class Grid:
     def get_tile_at_tile(self, tpos):
         if tpos[0] < 0 or tpos[0] >= len(self.tiles[0]) or tpos[1] < 0 or tpos[1] >= len(self.tiles):
             return Tile.GROUND
-        return self.tiles[tpos[1]][tpos[0]]
+        return self.tiles[math.floor(tpos[1])][math.floor(tpos[0])]
 
     def tile_is_solid(self, tile_enum):
         if tile_enum == Tile.AIR:
@@ -75,6 +76,7 @@ class Grid:
             ty = min_ty
             while ty <= max_ty:
                 if only_solid and not self.tile_is_solid(self.get_tile_at_tile((tx, ty))):
+                    ty += 1
                     continue
                 x, y = self.tile_to_world((tx, ty))
                 width, height = c.TILE_WIDTH, c.TILE_HEIGHT
