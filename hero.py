@@ -1,4 +1,5 @@
 import math
+import random
 
 import pygame.draw
 
@@ -16,9 +17,10 @@ class Hero(PlatformObject):
         super().__init__(frame, x, y, w, h)
         self.aim_angle = math.pi  # In radians!!!
         self.target_angle = self.aim_angle
-        self.cooldown = COOLDOWN
+        self.cooldown = HERO_COOLDOWN
         self.target = None
         self.t = 0
+        self.hp = 5
 
         self.sprite = Sprite(12)
         idle = Animation(ImageManager.load("assets/images/Man Idle temp.png", 0.5), (1, 1), 1)
@@ -47,6 +49,10 @@ class Hero(PlatformObject):
         self.sprite.update(dt, events)
         self.arm_sprite.update(dt, events)
         self.t += dt
+        # Remove if dead
+        if self.hp <= 0:
+            self.frame.heros.remove(self)
+            # TODO: death animation
         # Select target
         self.target, self.target_angle = self.get_zombie()
         # Default to swivel aim if no target found
@@ -55,7 +61,7 @@ class Hero(PlatformObject):
                 self.target_angle = math.sin(self.t * 2) * 0.1
             else:
                 self.target_angle = math.pi + math.sin(self.t * 2) * 0.1
-            self.cooldown = COOLDOWN/2
+            self.cooldown = HERO_COOLDOWN / 2
         # Face towards target
         if math.cos(self.aim_angle) * math.cos(self.target_angle) < 0:
             self.aim_angle = math.pi-self.aim_angle
@@ -73,7 +79,7 @@ class Hero(PlatformObject):
         # Shoot on a cooldown
         self.cooldown -= dt
         if self.cooldown <= 0 and self.target:
-            self.cooldown = COOLDOWN
+            self.cooldown = HERO_COOLDOWN
             self.shoot()
 
     def muzzle(self):
@@ -107,7 +113,10 @@ class Hero(PlatformObject):
     def shoot(self):
         """ Launch a projectile """
         self.vx -= math.cos(self.aim_angle) * RECOIL
-        self.frame.projectiles.append(Projectile(self.frame, *self.muzzle(), self.aim_angle))
+        x, y = self.muzzle()
+        dx, dy = math.sin(self.aim_angle), -math.cos(self.aim_angle)
+        d = (random.random() - .5) * 2 * SHOT_JITTER
+        self.frame.projectiles.append(Projectile(self.frame, x + dx * d, y + dy * d, self.aim_angle))
 
     def get_zombie(self, max_dist=1000):
         """ Get the closest zombie within line-of-sight, prioritizing previous target """
@@ -126,3 +135,7 @@ class Hero(PlatformObject):
                     min_dist = dist
         angle = math.atan2(min_zombie.y - y0, min_zombie.x - x0) if min_zombie else None
         return min_zombie, angle
+
+    def hit(self, damage):
+        self.hp -= damage
+        # TODO: damage animation

@@ -23,13 +23,20 @@ FRICTION = 10                   # grounded friction time constant in 1/s
 V_MIN_SLIDE = 5                 # minimum sliding velocity in pixels/s
 
 # Zombie parameters
-ZOMBIE_SPEED = 10               # zombie walking speed in pixels/s
+ZOMBIE_SPEED = 20               # zombie walking speed in pixels/s
+ZOMBIE_KNOCKBACK = 50           # zombie attack impulse on hero in pixels/s
+ZOMBIE_COOLDOWN = 0.5           # time between attacks in s
 
 # Hero parameters
-RECOIL = 50                     # pixels/s
-COOLDOWN = 1                    # s
-TARGET_PRIORITY = 0.7           # unitless
-SWIVEL_SPEED = 2                # rad/s
+RECOIL = 10                     # gun knockback in pixels/s
+HERO_COOLDOWN = 0.1             # time between shots in s
+TARGET_PRIORITY = 0.7           # amount to prioritize switching to a closer target (0 to 1)
+SWIVEL_SPEED = 2                # gun aiming speed in rad/s
+SHOT_JITTER = 20                # maximum projectile initial offset in pixels
+
+# Projectile parameters
+BULLET_SPEED = 500              # bullet speed in pixels/s
+BULLET_FORCE = 0.1              # bullet mass to zombie mass ratio
 
 # Direction constants
 UP_LEFT = (-1, -1)
@@ -41,7 +48,3 @@ RIGHT = (1, 0)
 DOWN_LEFT = (-1, 1)
 DOWN = (0, 1)
 DOWN_RIGHT = (1, 0)
-
-# Projectile parameters
-BULLET_SPEED = 500              # bullet speed in pixels/s
-BULLET_FORCE = 0.3              # bullet mass to zombie mass ratio

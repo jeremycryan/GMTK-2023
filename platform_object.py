@@ -17,6 +17,7 @@ class PlatformObject:
         self.solid = solid
         self.vx = 0
         self.vy = 0
+        self.vx_des = 0
         self.ballistic = True
 
     def update(self, dt, events):
@@ -46,9 +47,9 @@ class PlatformObject:
         """ Update velocity and position via continuous physics """
         self.x += self.vx * dt
         self.y += self.vy * dt
-        if abs(self.vx) < V_MIN_SLIDE:
-            self.vx = 0
-        self.vx -= FRICTION * self.vx * dt
+        if abs(self.vx_des - self.vx) < V_MIN_SLIDE:
+            self.vx = self.vx_des
+        self.vx += FRICTION * (self.vx_des - self.vx) * dt
 
     def collision_update(self):
         """ Collide with any intersecting tiles and determine if object is grounded """
@@ -68,10 +69,11 @@ class PlatformObject:
                     if dv >= 0:
                         self.vx -= d[0] / norm * dv
                         self.vy -= d[1] / norm * dv
-                        self.vx *= TANGENTIAL_RESTITUTION
-                        self.vy *= TANGENTIAL_RESTITUTION
-                        self.vx -= d[0] / norm * dv * HORIZONTAL_RESTITUTION
-                        self.vy -= d[1] / norm * dv * VERTICAL_RESTITUTION
+                        if self.ballistic:
+                            self.vx *= TANGENTIAL_RESTITUTION
+                            self.vy *= TANGENTIAL_RESTITUTION
+                            self.vx -= d[0] / norm * dv * HORIZONTAL_RESTITUTION
+                            self.vy -= d[1] / norm * dv * VERTICAL_RESTITUTION
                 # Check if grounded
                 #if self.ballistic and d[1] > 0 and (self.vy ** 2 + self.vx ** 2) < V_MIN_BOUNCE ** 2:
                 if self.ballistic and d[1] > 0 and (self.vy ** 2) < V_MIN_BOUNCE ** 2:
