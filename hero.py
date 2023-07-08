@@ -32,8 +32,8 @@ class Hero(PlatformObject):
         self.sprite.start_animation("idle_left")
 
         self.arm_sprite = Sprite(12)
-        aiming = Animation(ImageManager.load("assets/images/Man Arm Idle Temp.png", 0.5), (1, 1), 1)
-        aiming_right = Animation(ImageManager.load("assets/images/Man Arm Idle Temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        aiming = Animation(ImageManager.load("assets/images/man arm aim temp.png", 0.5), (1, 1), 1)
+        aiming_right = Animation(ImageManager.load("assets/images/man arm aim temp.png", 0.5), (1, 1), 1, reverse_x=True)
         standby = Animation(ImageManager.load("assets/images/man arm standby temp.png", 0.5), (1, 1), 1)
         standby_right = Animation(ImageManager.load("assets/images/man arm standby temp.png", 0.5), (1, 1), 1, reverse_x=True)
         self.arm_sprite.add_animation({
@@ -43,6 +43,9 @@ class Hero(PlatformObject):
             "standby_right": standby_right,
         })
         self.arm_sprite.start_animation("aiming_left")
+
+    def facing_left(self):
+        return (math.pi/2) < self.aim_angle%(2*math.pi) < (3*math.pi/2)
 
     def update(self, dt, events):
         super().update(dt, events)
@@ -85,18 +88,35 @@ class Hero(PlatformObject):
     def muzzle(self):
         """ Location of end of gun """
         x, y = self.muzzle_center()
-        x0 = x + 20*math.cos(self.aim_angle)
-        y0 = y + 20*math.sin(self.aim_angle)
+        muzzle_length = 60
+        x0 = x + muzzle_length*math.cos(self.aim_angle)
+        y0 = y + muzzle_length*math.sin(self.aim_angle)
         return x0, y0
 
     def muzzle_center(self):
         """ Location of gun center of rotation (should be in line with the barrel)"""
-        return self.x, self.y
+        x_factor = -1 if self.facing_left() else 1
+        return self.x + 30*x_factor, self.y + 10
+
+    def gun_center(self):
+        muz = self.muzzle()
+        muz_rot = self.muzzle_center()
+        length_down = 0.5
+        return muz[0] * length_down + muz_rot[0] * (1-length_down), muz[1] * length_down + muz_rot[1] * (1 - length_down)
 
     def draw(self, surface, offset):
         super().draw(surface, offset)
         x, y = self.raycast(self.muzzle(), self.aim_angle)
         pygame.draw.line(surface, (255, 0, 0), (self.muzzle()), (x, y), 2)
+
+        arm_surf = self.arm_sprite.get_image()
+        if self.facing_left():
+            arm_surf = pygame.transform.rotate(arm_surf, math.degrees(-self.aim_angle + math.pi) )
+        x, y = self.gun_center()
+        x -= arm_surf.get_width()//2
+        y -= arm_surf.get_height()//2
+        surface.blit(arm_surf, (x, y))
+
         self.sprite.x = self.x
         self.sprite.y = self.y
         self.sprite.draw(surface, offset)
