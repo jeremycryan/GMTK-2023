@@ -11,11 +11,13 @@ TILE_HEIGHT = 64
 TILE_SIZE = TILE_WIDTH, TILE_HEIGHT
 
 # Physics parameters
-GRAVITY = 800                   # acceleration in pixels/s^2
-DRAG = 0.1                      # ballistic drag time constant in 1/s
-RESTITUTION = 0.1               # elasticity in normal direction
-TANGENTIAL_RESTITUTION = 0.7    # elasticity in tangential direction
-V_MIN_BOUNCE = 25               # minimum bounce velocity in pixels/s
+GRAVITY = 800                   # pixels/s^2
+DRAG = 0.1                      # 1/s
+TERMINAL_VELOCITY = 500
+VERTICAL_RESTITUTION = 0.0
+HORIZONTAL_RESTITUTION = 0.2
+TANGENTIAL_RESTITUTION = 0.7     # unitless
+V_MIN_BOUNCE = 25               # pixels/s
 
 FRICTION = 10                   # grounded friction time constant in 1/s
 V_MIN_SLIDE = 5                 # minimum sliding velocity in pixels/s
@@ -35,3 +37,14 @@ SHOT_JITTER = 20                # maximum projectile initial offset in pixels
 # Projectile parameters
 BULLET_SPEED = 500              # bullet speed in pixels/s
 BULLET_FORCE = 0.1              # bullet mass to zombie mass ratio
+
+# Direction constants
+UP_LEFT = (-1, -1)
+UP = (0, -1)
+UP_RIGHT = (1, -1)
+LEFT = (-1, 0)
+SELF = (0, 0)
+RIGHT = (1, 0)
+DOWN_LEFT = (-1, 1)
+DOWN = (0, 1)
+DOWN_RIGHT = (1, 0)
