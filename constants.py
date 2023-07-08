@@ -11,11 +11,11 @@ TILE_HEIGHT = 64
 TILE_SIZE = TILE_WIDTH, TILE_HEIGHT
 
 # Physics parameters
-GRAVITY = 300                   # pixels/s^2
+GRAVITY = 800                   # pixels/s^2
 DRAG = 0.1                      # 1/s
+RESTITUTION = 0.1               # unitless
+TANGENTIAL_RESTITUTION = 0.7     # unitless
 V_MIN_BOUNCE = 25               # pixels/s
-RESTITUTION = 0.15              # unitless
-TANGENTIAL_RESITUTION = 0.7     # unitless
 
 FRICTION = 10                   # 1/s
 V_MIN_SLIDE = 5                 # pixels/s
@@ -27,4 +27,4 @@ ZOMBIE_SPEED = 5                # pixels/s
 RECOIL = 50                     # pixels/s
 COOLDOWN = 1                    # s
 TARGET_PRIORITY = 0.7           # unitless
-SWIVEL_SPEED = 1                # rad/s
+SWIVEL_SPEED = 2                # rad/s
