@@ -134,7 +134,10 @@ class Zombie(PlatformObject):
             return
         if self.vy < 0:
             self.agape = True
-            self.sprite.start_animation("fling_left")
+            if self.vx < 0:
+                self.sprite.start_animation("fling_left")
+            else:
+                self.sprite.start_animation("fling_right")
         else:
             self.sprite.start_animation("falling_left")
         self.state = Zombie.BALLISTIC
