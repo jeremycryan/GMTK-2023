@@ -43,9 +43,9 @@ class Projectile:
 
     def draw(self, surface, offset):
         if self.hit:
-            pygame.draw.circle(surface, (255, 0, 0), (self.x + offset[0], self.y + offset[1]), self.r * 2)
+            pygame.draw.circle(surface, (255, 100, 0), (self.x + offset[0], self.y + offset[1]), self.r * 2)
         else:
-            pygame.draw.circle(surface, (255, 0, 0), (self.x + offset[0], self.y + offset[1]), self.r)
+            pygame.draw.circle(surface, (50, 50, 50), (self.x + offset[0], self.y + offset[1]), self.r)
 
     def collide(self, rect):
         """ Return true if collision occurs, else False """

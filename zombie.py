@@ -21,9 +21,11 @@ class Zombie(PlatformObject):
 
         self.sprite = Sprite(12)
         self.state = Zombie.IDLE
-        self.hp = 2
+        self.hp = 5
         self.death_time = 0.2
         self.grabbed = False
+        self.cooldown = 0
+        self.damage = 1
         scale_by = 0.5
         fling = Animation(ImageManager.load("assets/images/ZR Throw temp.png", scale_by=scale_by), (1, 1), 1)
         fling_right = Animation(ImageManager.load("assets/images/ZR Throw temp.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
@@ -62,6 +64,9 @@ class Zombie(PlatformObject):
             if self.death_time <= 0:
                 self.frame.zombies.remove(self)
             return
+        self.cooldown -= dt
+        if self.cooldown <= 0:
+            self.attack()
         if self.grabbed:
             self.state = Zombie.GRABBED
             self.ballistic = False
@@ -70,14 +75,14 @@ class Zombie(PlatformObject):
             #self.x, self.y = pygame.mouse.get_pos()
 
         if not self.ballistic and not self.grabbed:
-            if self.vx > 0:
-                self.vx = ZOMBIE_SPEED
+            if self.vx_des > 0:
+                self.vx_des = ZOMBIE_SPEED
                 self.sprite.start_animation("idle_right", restart_if_active=False)
-            elif self.vx < 0:
-                self.vx = -ZOMBIE_SPEED
+            elif self.vx_des < 0:
+                self.vx_des = -ZOMBIE_SPEED
                 self.sprite.start_animation("idle_left", restart_if_active=False)
             else:
-                self.vx = ZOMBIE_SPEED if random.random() > 0.5 else -ZOMBIE_SPEED
+                self.vx_des = ZOMBIE_SPEED if random.random() > 0.5 else -ZOMBIE_SPEED
         self.sprite.update(dt, events)
 
     def draw(self, surface, offset):
@@ -110,6 +115,7 @@ class Zombie(PlatformObject):
         else:
             self.sprite.start_animation("falling_left")
         self.state = Zombie.BALLISTIC
+        self.vx_des = math.copysign(ZOMBIE_SPEED, self.vx)
 
     def on_become_grounded(self):
         super().on_become_grounded()
@@ -119,3 +125,20 @@ class Zombie(PlatformObject):
 
     def hit(self, damage):
         self.hp -= damage
+
+    def on_collision(self, tile_type, tile_rect):
+        dx, dy = self.get_tile_range()
+        if tile_rect.top < self.y < tile_rect.bottom:
+            if tile_rect.left >= self.x + dx and self.vx_des > 0:
+                self.vx_des = -self.vx_des
+            if tile_rect.right <= self.x - dx and self.vx_des < 0:
+                self.vx_des = -self.vx_des
+
+    def attack(self):
+        for hero in self.frame.heros:
+            if self.collide(hero.get_rect()):
+                # TODO: attack animation
+                hero.hit(self.damage)
+                hero.vx += math.copysign(ZOMBIE_KNOCKBACK, self.vx_des)
+                self.cooldown = ZOMBIE_COOLDOWN
+                break
