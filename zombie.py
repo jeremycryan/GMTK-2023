@@ -70,6 +70,7 @@ class Zombie(PlatformObject):
     def update(self, dt, events):
         """ Walk around randomly once zombie is grounded """
         super().update(dt, events)
+        print(self.vx_des)
         if self.hp <= 0:
             self.grabbed = False
             self.death_time -= dt
@@ -87,10 +88,10 @@ class Zombie(PlatformObject):
             #self.x, self.y = pygame.mouse.get_pos()
 
         if not self.ballistic and not self.grabbed and not self.state == Zombie.LANDING:
-            if self.vx_des > 0 or "right" in self.sprite.active_animation_key:
+            if self.vx_des > 0:
                 self.vx_des = ZOMBIE_SPEED
                 self.sprite.start_animation("idle_right", restart_if_active=False)
-            elif self.vx_des < 0 or "left" in self.sprite.active_animation_key:
+            elif self.vx_des < 0:
                 self.vx_des = -ZOMBIE_SPEED
                 self.sprite.start_animation("idle_left", restart_if_active=False)
             else:
