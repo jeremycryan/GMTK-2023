@@ -16,7 +16,7 @@ DRAG = 0.1                      # 1/s
 TERMINAL_VELOCITY = 500
 VERTICAL_RESTITUTION = 0.0
 HORIZONTAL_RESTITUTION = 0.2
-TANGENTIAL_RESTITUTION = 0.7     # unitless
+TANGENTIAL_RESTITUTION = 1      # unitless
 V_MIN_BOUNCE = 25               # pixels/s
 
 FRICTION = 10                   # grounded friction time constant in 1/s
@@ -33,6 +33,8 @@ HERO_COOLDOWN = 0.1             # time between shots in s
 TARGET_PRIORITY = 0.7           # amount to prioritize switching to a closer target (0 to 1)
 SWIVEL_SPEED = 2                # gun aiming speed in rad/s
 SHOT_JITTER = 20                # maximum projectile initial offset in pixels
+HERO_SPEED = 100                 # hero walking speed in pixels/s
+HERO_JUMP = 500                 # hero jump speed in pixels/s
 
 # Projectile parameters
 BULLET_SPEED = 500              # bullet speed in pixels/s

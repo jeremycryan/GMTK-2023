@@ -4,13 +4,14 @@ import random
 import pygame.draw
 
 from constants import *
+from grid import Tile
 from platform_object import PlatformObject
 from projectile import Projectile
 
 
 class Hero(PlatformObject):
 
-    def __init__(self, frame, x, y, w=100, h=100):
+    def __init__(self, frame, x, y, w=64, h=100):
         super().__init__(frame, x, y, w, h)
         self.aim_angle = math.pi  # In radians!!!
         self.target_angle = self.aim_angle
@@ -18,6 +19,8 @@ class Hero(PlatformObject):
         self.target = None
         self.t = 0
         self.hp = 5
+        self.location = None
+        self.destination = None
 
     def update(self, dt, events):
         super().update(dt, events)
@@ -26,6 +29,16 @@ class Hero(PlatformObject):
         if self.hp <= 0:
             self.frame.heros.remove(self)
             # TODO: death animation
+        # Update navigation
+        self.navigate()
+        if self.destination:
+            self.vx_des = math.copysign(HERO_SPEED, self.destination[0] - self.location[0])
+            if not self.ballistic and self.destination[1] < self.location[1]:
+                self.vy -= HERO_JUMP
+        else:
+            self.vx_des = 0
+        if self.ballistic:
+            self.vx = self.vx_des
         # Select target
         self.target, self.target_angle = self.get_zombie()
         # Default to swivel aim if no target found
@@ -67,7 +80,7 @@ class Hero(PlatformObject):
         return self.x, self.y
 
     def draw(self, surface, offset):
-        super().draw(surface, offset)
+        pygame.draw.rect(surface, (255, 0, 0), self.get_rect(offset), 2)
         x, y = self.raycast(self.muzzle(), self.aim_angle)
         pygame.draw.line(surface, (255, 0, 0), (self.muzzle()), (x, y), 2)
 
@@ -108,3 +121,29 @@ class Hero(PlatformObject):
     def hit(self, damage):
         self.hp -= damage
         # TODO: damage animation
+
+    def navigate(self):
+        if self.ballistic:
+            return
+        x, y = self.frame.grid.world_to_tile((self.x, self.y + self.h/2 + 1))
+        x, y = math.floor(x), math.floor(y)
+        # Left previous tile; choose a new goal
+        if (x, y) != self.location or self.destination is None:
+            self.location = (x, y)
+            dx = 1 if (random.random() > 0.5) else -1
+            for dy in range(-2, 3):
+                tile0 = self.frame.grid.get_tile_at_tile((x + dx, y + dy))
+                tile1 = self.frame.grid.get_tile_at_tile((x + dx, y + dy - 1))
+                tile2 = self.frame.grid.get_tile_at_tile((x + dx, y + dy - 2))
+                if tile0 == Tile.GROUND and tile1 == Tile.AIR and tile2 == Tile.AIR:
+                    self.destination = (x + dx, y + dy)
+                    self.vx = 0
+                    return
+            self.destination = None
+
+    def collide(self, rect):
+        return self.collide_box(rect)
+
+    def get_tile_range(self):
+        """ Minimum x and y distance of tiles to check for possible collisions """
+        return self.w/2, self.h/2
