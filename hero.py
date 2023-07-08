@@ -88,7 +88,7 @@ class Hero(PlatformObject):
     def muzzle(self):
         """ Location of end of gun """
         x, y = self.muzzle_center()
-        muzzle_length = 60
+        muzzle_length = 85
         x0 = x + muzzle_length*math.cos(self.aim_angle)
         y0 = y + muzzle_length*math.sin(self.aim_angle)
         return x0, y0
@@ -111,8 +111,18 @@ class Hero(PlatformObject):
 
         arm_surf = self.arm_sprite.get_image()
         if self.facing_left():
-            arm_surf = pygame.transform.rotate(arm_surf, math.degrees(-self.aim_angle + math.pi) )
-        x, y = self.gun_center()
+            arm_offset = (40, 22)
+            arm_surf = pygame.transform.rotate(arm_surf, math.degrees(-self.aim_angle + math.pi))
+        else:
+            arm_offset = (-40, 22)
+            arm_surf = pygame.transform.rotate(arm_surf, math.degrees(-self.aim_angle + math.pi))
+        angle = -self.aim_angle
+        arm_offset = math.cos(angle) * arm_offset[0] + math.sin(angle)*arm_offset[1], \
+                     math.cos(angle)*arm_offset[1] - math.sin(angle)*arm_offset[0]
+
+        x, y = self.muzzle_center()
+        x += arm_offset[0]
+        y += arm_offset[1]
         x -= arm_surf.get_width()//2
         y -= arm_surf.get_height()//2
         surface.blit(arm_surf, (x, y))
