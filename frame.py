@@ -38,7 +38,7 @@ class Frame:
         self.zombies += grabbed
 
     def draw(self, surface, offset=(0, 0)):
-        surface.fill((0, 0, 0))
+        surface.fill((100, 0, 0))
         self.grid.draw(surface, offset, only=[Tile.AIR])
         for hero in self.heros:
             hero.draw(surface, offset)

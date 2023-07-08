@@ -15,14 +15,15 @@ class Zombie(PlatformObject):
     WALKING = 1
     BALLISTIC = 2
     GRABBED = 3
-
+    LANDING = 4
 
     def __init__(self, frame, x, y):
-        super().__init__(frame, x, y, 64, 64, r=32)
+        super().__init__(frame, x, y, 52, 52, r=26)
 
         self.sprite = Sprite(12)
         self.state = Zombie.IDLE
         self.grabbed = False
+
         scale_by = 0.5
         fling = Animation(ImageManager.load("assets/images/ZR Throw temp.png", scale_by=scale_by), (1, 1), 1)
         fling_right = Animation(ImageManager.load("assets/images/ZR Throw temp.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
@@ -32,6 +33,8 @@ class Zombie(PlatformObject):
         hold_right = Animation(ImageManager.load("assets/images/ZR held temp.png", scale_by=scale_by), (2, 1), 2, reverse_x=True)
         falling = Animation(ImageManager.load("assets/images/ZR Fall Temp.png", scale_by=scale_by), (1, 1), 1)
         falling_right = Animation(ImageManager.load("assets/images/ZR Fall Temp.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
+        land = Animation(ImageManager.load("assets/images/ZR Land Temp.png", scale_by=scale_by), (1, 1), 1)
+        land_right = Animation(ImageManager.load("assets/images/ZR Land Temp.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
         self.sprite.add_animation(
             {
                 "fling_left": fling,
@@ -42,15 +45,24 @@ class Zombie(PlatformObject):
                 "hold_right": hold_right,
                 "falling_left": falling,
                 "falling_right": falling_right,
+                "land_left": land,
+                "land_right": land_right,
             },
             loop=True,
         )
+        self.sprite.chain_animation("land_left", "idle_left")
+        self.sprite.chain_animation("land_right","idle_right")
+        self.sprite.add_callback("land_left", self.on_land, [True])
+        self.sprite.add_callback("land_right", self.on_land, [False])
         self.sprite.start_animation("idle_left")
 
         self.agape = False
 
         if self.ballistic:
             self.on_become_ballistic()
+
+        self.squash = 1.0
+
 
 
 
@@ -64,16 +76,23 @@ class Zombie(PlatformObject):
             self.vy = 0
             #self.x, self.y = pygame.mouse.get_pos()
 
-        if not self.ballistic and not self.grabbed:
-            if self.vx > 0:
+        if not self.ballistic and not self.grabbed and not self.state == Zombie.LANDING:
+            if self.vx > 0 or "right" in self.sprite.active_animation_key:
                 self.vx = ZOMBIE_SPEED
                 self.sprite.start_animation("idle_right", restart_if_active=False)
-            elif self.vx < 0:
+            elif self.vx < 0 or "left" in self.sprite.active_animation_key:
                 self.vx = -ZOMBIE_SPEED
                 self.sprite.start_animation("idle_left", restart_if_active=False)
             else:
                 self.vx = ZOMBIE_SPEED if random.random() > 0.5 else -ZOMBIE_SPEED
         self.sprite.update(dt, events)
+
+        if self.state == Zombie.IDLE:
+            ds = 1.0 - self.squash
+            if ds:
+                self.squash += ds*dt*15
+            if abs(self.squash - 1) < 0.05:
+                self.squash = 1
 
     def draw(self, surface, offset):
         super().draw(surface, offset)
@@ -87,8 +106,12 @@ class Zombie(PlatformObject):
             else:
                 self.agape = False
                 self.sprite.start_animation(f"falling_{direction}", restart_if_active=False)
+                self.squash = max(1/(1 + abs(self.vy)*0.0005), 0.7)
+
         if self.grabbed:
             self.sprite.start_animation(f"hold_{direction}", restart_if_active=False)
+        if self.squash != 1.0:
+            my_surf = pygame.transform.scale(my_surf, (my_surf.get_width()*self.squash, my_surf.get_height()*(1/self.squash)))
         x = self.x + offset[0] - my_surf.get_width()//2
         y = self.y + offset[1] - my_surf.get_height()//2
         surface.blit(my_surf, (x, y))
@@ -109,4 +132,14 @@ class Zombie(PlatformObject):
         super().on_become_grounded()
         if self.grabbed:
             return
+        direction = "left" if ("left" in self.sprite.active_animation_key) else "right"
+        self.sprite.start_animation(f"land_{direction}")
+        self.state = Zombie.LANDING
+
+    def on_land(self, left=True):
+        if left:
+            self.sprite.start_animation(f"idle_left")
+        else:
+            self.sprite.start_animation(f"idle_right")
+        self.squash = 1.3
         self.state = Zombie.IDLE

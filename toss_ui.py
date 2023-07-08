@@ -6,7 +6,7 @@ from image_manager import ImageManager
 
 
 class TossUI:
-    SLOWDOWN = 0.7
+    SLOWDOWN = 0.8
     FADE_IN_TIME = 0.25
     THROW_RADIUS = 100
     MAX_THROW_SPEED = 650

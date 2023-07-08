@@ -70,10 +70,11 @@ class PlatformObject:
                         self.vy -= d[1] / norm * dv
                         self.vx *= TANGENTIAL_RESTITUTION
                         self.vy *= TANGENTIAL_RESTITUTION
-                        self.vx -= d[0] / norm * dv * RESTITUTION
-                        self.vy -= d[1] / norm * dv * RESTITUTION
+                        self.vx -= d[0] / norm * dv * HORIZONTAL_RESTITUTION
+                        self.vy -= d[1] / norm * dv * VERTICAL_RESTITUTION
                 # Check if grounded
-                if self.ballistic and d[1] > 0 and (self.vy ** 2 + self.vx ** 2) < V_MIN_BOUNCE ** 2:
+                #if self.ballistic and d[1] > 0 and (self.vy ** 2 + self.vx ** 2) < V_MIN_BOUNCE ** 2:
+                if self.ballistic and d[1] > 0 and (self.vy ** 2) < V_MIN_BOUNCE ** 2:
                     # Collided from above, with resulting velocity below a threshold
                     ballistic = False
                     self.vx = 0
