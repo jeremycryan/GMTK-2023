@@ -8,9 +8,12 @@ import math
 
 class Grid:
 
-    def __init__(self):
+    def __init__(self, level=1):
         self.x = 0
         self.y = 0
+        self.spawners = []
+        self.heros = []
+        self.level = level
 
         self.tile_surfs = {
             Tile.AIR: ImageManager.load("assets/images/air.png"),
@@ -20,11 +23,13 @@ class Grid:
         self.char_map = {
             ".": Tile.AIR,
             "X": Tile.GROUND,
+            "1": Tile.AIR,
+            "*": Tile.AIR,
         }
 
         for key in self.tile_surfs:
             self.tile_surfs[key] = pygame.transform.scale(self.tile_surfs[key], c.TILE_SIZE)
-        self.load_tiles("assets/levels/level1.txt")
+        self.load_tiles(f"assets/levels/level{self.level}.txt")
         self.load_tile_surface_array()
         self.center()
 
@@ -45,6 +50,11 @@ class Grid:
             for x, tile in enumerate(row):
                 character = raw[y][x]
                 self.tiles[y][x] = self.char_map[character]
+                if character == "1":
+                    self.spawners.append(self.tile_to_world((x, y)))
+                elif character == "*":
+                    self.heros.append(self.tile_to_world((x, y)))
+
 
     def load_tile_surface_array(self):
         tile_surf = ImageManager.load("assets/images/tileset temp 128x128 per tile.png")

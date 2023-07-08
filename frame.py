@@ -26,10 +26,10 @@ class FrameBase:
     def next_frame(self):
         return Frame(self.game)
 
+
 class Frame(FrameBase):
     def __init__(self, game):
-        self.game = game
-        self.done = False
+        super().__init__(game)
 
     def load(self):
         self.grid = Grid()

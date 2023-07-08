@@ -150,7 +150,7 @@ class Hero(PlatformObject):
         self.sprite.draw(surface, offset)
 
 
-    def raycast(self, origin, angle, step=1, max_length=1000):
+    def raycast(self, origin, angle, step=1, max_length=2000):
         """ Find first collision of ray with the tilemap """
         x, y = origin
         for i in range(int(max_length/step)):
