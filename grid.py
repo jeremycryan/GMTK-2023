@@ -3,6 +3,8 @@ import random
 import contants as c
 from image_manager import ImageManager
 
+import math
+
 class Grid:
 
     def __init__(self):
@@ -25,7 +27,7 @@ class Grid:
         self.y = c.WINDOW_HEIGHT//2 - height//2
 
     def load_tiles(self):
-        width = 16
+        width = 12
         height = 8
         self.tiles = [[random.choice((Tile.AIR, Tile.GROUND)) for _ in range(width)] for _ in range(height)]
 
@@ -44,7 +46,7 @@ class Grid:
         Snaps a world position to the top left corner of that tile
         """
         tpos = self.world_to_tile(pos)
-        stpos = int(tpos[0]), int(tpos[1])
+        stpos = math.floor(tpos[0]), math.floor(tpos[1])
         return self.tile_to_world(stpos)
 
     def update(self, dt, events):
@@ -56,7 +58,7 @@ class Grid:
             py = 0
             while py <= c.WINDOW_HEIGHT + c.TILE_HEIGHT:
                 wx = px - offset[0]  # world position; where probe is relative to grid origin
-                wy = py - offset[0]
+                wy = py - offset[1]
                 tile_pos = self.world_to_tile((wx, wy))
                 tile_pos = int(tile_pos[0]), int(tile_pos[1])
                 tile_type = Tile.GROUND
