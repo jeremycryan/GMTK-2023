@@ -30,14 +30,15 @@ ZOMBIE_COOLDOWN = 0.5           # time between attacks in s
 # Hero parameters
 RECOIL = 10                     # gun knockback in pixels/s
 HERO_COOLDOWN = 0.1             # time between shots in s
+HERO_AIM_TIME = 0.5             # time to hold aim steady before shooting
 TARGET_PRIORITY = 0.7           # amount to prioritize switching to a closer target (0 to 1)
 SWIVEL_SPEED = 2                # gun aiming speed in rad/s
 SHOT_JITTER = 20                # maximum projectile initial offset in pixels
-HERO_SPEED = 100                 # hero walking speed in pixels/s
+HERO_SPEED = 100                # hero walking speed in pixels/s
 HERO_JUMP = 500                 # hero jump speed in pixels/s
 
 # Projectile parameters
-BULLET_SPEED = 500              # bullet speed in pixels/s
+BULLET_SPEED = 1500             # bullet speed in pixels/s
 BULLET_FORCE = 0.1              # bullet mass to zombie mass ratio
 
 # Direction constants

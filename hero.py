@@ -19,6 +19,8 @@ class Hero(PlatformObject):
         self.aim_angle = math.pi  # In radians!!!
         self.target_angle = self.aim_angle
         self.cooldown = HERO_COOLDOWN
+        self.aim_time = HERO_AIM_TIME
+        self.clip = 10
         self.target = None
         self.t = 0
         self.hp = 5
@@ -77,7 +79,8 @@ class Hero(PlatformObject):
                 self.target_angle = math.sin(self.t * 2) * 0.1
             else:
                 self.target_angle = math.pi + math.sin(self.t * 2) * 0.1
-            self.cooldown = HERO_COOLDOWN / 2
+            self.cooldown = 0
+            self.aim_time = HERO_AIM_TIME
         # Face towards target
         if math.cos(self.aim_angle) * math.cos(self.target_angle) < 0:
             self.aim_angle = math.pi-self.aim_angle
@@ -93,10 +96,12 @@ class Hero(PlatformObject):
         if abs((self.aim_angle - self.target_angle + math.pi) % (2*math.pi) - math.pi) < da:
             self.aim_angle = self.target_angle
         # Shoot on a cooldown
-        self.cooldown -= dt
-        if self.cooldown <= 0 and self.target:
-            self.cooldown = HERO_COOLDOWN
-            self.shoot()
+        self.aim_time -= dt
+        if self.aim_time <= 0:
+            self.cooldown -= dt
+            if self.cooldown <= 0 and self.target:
+                self.cooldown = HERO_COOLDOWN
+                self.shoot()
 
     def muzzle(self):
         """ Location of end of gun """
