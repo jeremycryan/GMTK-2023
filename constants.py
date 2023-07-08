@@ -11,7 +11,6 @@ TILE_HEIGHT = 64
 TILE_SIZE = TILE_WIDTH, TILE_HEIGHT
 
 # Physics parameters
-<<<<<<< HEAD
 GRAVITY = 800                   # pixels/s^2
 DRAG = 0.1                      # 1/s
 TERMINAL_VELOCITY = 500
