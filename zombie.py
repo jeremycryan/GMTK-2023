@@ -62,7 +62,7 @@ class Zombie(PlatformObject):
             self.ballistic = False
             self.vx = 0
             self.vy = 0
-            self.x, self.y = pygame.mouse.get_pos()
+            #self.x, self.y = pygame.mouse.get_pos()
 
         if not self.ballistic and not self.grabbed:
             if self.vx > 0:

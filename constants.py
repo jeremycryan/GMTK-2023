@@ -18,4 +18,4 @@ FRICTION = 0.7                  # unitless
 V_MIN_BOUNCE = 25               # pixels/s
 
 # Zombie parameters
-ZOMBIE_SPEED = 5              # pixels/s
+ZOMBIE_SPEED = 10              # pixels/s
