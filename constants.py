@@ -13,7 +13,7 @@ TILE_SIZE = TILE_WIDTH, TILE_HEIGHT
 # Physics parameters
 GRAVITY = 300                   # pixels/s^2
 DRAG = 0.1                      # 1/s
-RESTITUTION = 0.15               # unitless
+RESTITUTION = 0.1               # unitless
 FRICTION = 0.7                  # unitless
 V_MIN_BOUNCE = 25               # pixels/s
 

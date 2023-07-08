@@ -28,6 +28,8 @@ class Zombie(PlatformObject):
         idle_right = Animation(ImageManager.load("assets/images/zombie idle 256x256 12fps.png", scale_by=scale_by), (16, 1), 16, reverse_x=True)
         hold = Animation(ImageManager.load("assets/images/zombie hold 256x256 12fps.png", scale_by=scale_by))
         hold_right = Animation(ImageManager.load("assets/images/zombie hold 256x256 12fps.png", scale_by=scale_by), reverse_x=True)
+        falling = Animation(ImageManager.load("assets/images/zombie fall.png", scale_by=scale_by), (1, 1), 1)
+        falling_right = Animation(ImageManager.load("assets/images/zombie fall.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
         self.sprite.add_animation(
             {
                 "fling_left": fling,
@@ -36,6 +38,8 @@ class Zombie(PlatformObject):
                 "idle_right": idle_right,
                 "hold_left": hold,
                 "hold_right": hold_right,
+                "falling_left": falling,
+                "falling_right": falling_right,
             },
             loop=True,
         )
@@ -52,8 +56,10 @@ class Zombie(PlatformObject):
         if not self.ballistic:
             if self.vx > 0:
                 self.vx = ZOMBIE_SPEED
+                self.sprite.start_animation("idle_right", restart_if_active=False)
             elif self.vx < 0:
                 self.vx = -ZOMBIE_SPEED
+                self.sprite.start_animation("idle_left", restart_if_active=False)
             else:
                 self.vx = ZOMBIE_SPEED if random.random() > 0.5 else -ZOMBIE_SPEED
         self.sprite.update(dt, events)
@@ -61,9 +67,14 @@ class Zombie(PlatformObject):
     def draw(self, surface, offset):
         super().draw(surface, offset)
         my_surf = self.sprite.get_image()
+        direction = "left" if self.vx < 0 else "right"
         if self.state == Zombie.BALLISTIC:
-            angle = math.atan2(-self.vy, self.vx) + math.pi
-            my_surf = pygame.transform.rotate(my_surf, math.degrees(angle))
+            if self.vy < 0:
+                self.sprite.start_animation(f"fling_{direction}", restart_if_active=False)
+                angle = math.atan2(-self.vy, self.vx) + (math.pi if self.vx < 0 else 0)
+                my_surf = pygame.transform.rotate(my_surf, math.degrees(angle))
+            else:
+                self.sprite.start_animation(f"falling_{direction}", restart_if_active=False)
         x = self.x + offset[0] - my_surf.get_width()//2
         y = self.y + offset[1] - my_surf.get_height()//2
         surface.blit(my_surf, (x, y))
@@ -76,4 +87,3 @@ class Zombie(PlatformObject):
     def on_become_grounded(self):
         super().on_become_grounded()
         self.state = Zombie.IDLE
-        self.sprite.start_animation("idle_left")
