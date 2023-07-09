@@ -1,3 +1,4 @@
+import math
 import random
 
 import pygame
@@ -52,6 +53,9 @@ class Frame(FrameBase):
         self.victory = False
         self.level_end = False
         self.level_end_timer = 0
+        self.since_freeze = 0
+        self.since_shake = 1000
+        self.shake_amp = 0
         self.stage_clear_font = pygame.font.Font("assets/fonts/edge_of_the_galaxy.otf", 70)
         self.stage_clear_text = self.stage_clear_font.render("Stage Cleared!", True, (255, 255, 255))
         self.victory_text = self.stage_clear_font.render("Victory!", True, (255, 255, 255))
@@ -66,6 +70,9 @@ class Frame(FrameBase):
                 self.spawn_queue.append(Zombie(self, *self.get_spawner()))
             for i in range(2):
                 self.spawn_queue.append(BigZombie(self, *self.get_spawner()))
+        elif self.level == 3:
+            for i in range(5):
+                self.spawn_queue.append(Zombie(self, *self.get_spawner()))
 
     def get_spawner(self):
         self.spawner_count += 1
@@ -82,15 +89,21 @@ class Frame(FrameBase):
                     if self.victory:
                         self.level = 1
                         self.game.upgrade_levels = {key: 0 for key in UPGRADE_NAMES}
+                if event.key == pygame.K_s:
+                    self.shake(15)
 
         if self.level_end or self.victory:
             self.level_end_timer += dt
             if not self.victory and self.level_end_timer > 1:
                 self.done = True
             return
+        self.since_freeze += dt
+        self.update_shake(dt, events)
         self.upgrade_ui.update(dt, events)
         self.toss_ui.update(dt, events)
         dt = self.toss_ui.adjust_time(dt)
+        if self.since_freeze < 0:
+            dt *= 0.001
         self.t += dt
 
         if self.t > self.spawn_count * SPAWN_RATE:
@@ -121,12 +134,36 @@ class Frame(FrameBase):
             self.upgrade_ui.raise_up()
             self.complete = True
 
+    def shake(self, amt=15):
+        if amt < self.shake_amp:
+            return
+        self.since_shake = 0
+        self.shake_amp = amt
+
+    def update_shake(self, dt, events):
+        self.since_shake += dt
+        self.shake_amp *= 0.003**dt
+        self.shake_amp -= 10*dt
+        if self.shake_amp < 0:
+            self.shake_amp = 0
+
+    def freeze(self, duration):
+        self.since_freeze = -duration
+
+    def get_shake_offset(self, offset=(0, 0)):
+        x = offset[0]
+        y = offset[1]
+        x += math.cos(self.since_shake*35)*self.shake_amp
+        y += math.cos(self.since_shake*32)*self.shake_amp
+        return x, y
+
     def draw(self, surface, offset=(0, 0)):
         # surface.fill((100, 0, 0))
+        offset = self.get_shake_offset(offset)
         self.background.draw(surface, offset)
         # self.grid.draw(surface, offset, only=[Tile.AIR])
         if self.level == 1:
-            surface.blit(ImageManager.load("assets/images/tutorial.png"), (0, 0))
+            surface.blit(ImageManager.load("assets/images/tutorial.png"), (offset[0], offset[1]))
         for hero in self.heros:
             hero.draw(surface, offset)
         for zombie in self.zombies:

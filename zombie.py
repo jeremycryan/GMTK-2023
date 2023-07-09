@@ -168,6 +168,8 @@ class Zombie(PlatformObject):
 
     def hit(self, damage):
         self.hp -= damage
+        self.frame.shake(15)
+        self.frame.freeze(0.25)
 
     def on_collision(self, tile_type, tile_rect):
         dx, dy = self.get_tile_range()
