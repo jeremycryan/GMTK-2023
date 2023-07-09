@@ -6,6 +6,7 @@ import pygame.draw
 from constants import *
 from grid import Tile
 from image_manager import ImageManager
+from particle import Death
 from platform_object import PlatformObject
 from projectile import Projectile
 
@@ -99,6 +100,7 @@ class Hero(PlatformObject):
         # Remove if dead
         if self.hp <= 0:
             self.frame.heros.remove(self)
+            self.frame.particles.append(Death((self.x, self.y)))
             # TODO: death animation
             SoundManager.load("assets/audio/man_death.ogg").play()
             # SoundManager.load("assets/audio/man_dying_breaths.ogg").play()

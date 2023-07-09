@@ -76,6 +76,8 @@ class Frame(FrameBase):
         self.midbar.fill((0, 0, 0))
         self.midbar.set_alpha(160)
 
+        self.since_hero_dead = 0
+
     def load_zombies(self):
         self.spawner_count = 0
         if self.level == 1:
@@ -168,7 +170,9 @@ class Frame(FrameBase):
         for projectile in self.projectiles[:]:
             projectile.update(dt, events)
         self.background.update(dt, events)
-        if not len(self.heros) and not self.complete:
+        if len(self.heros) == 0:
+            self.since_hero_dead += dt
+        if not len(self.heros) and not self.complete and self.since_hero_dead > 3:
             self.upgrade_ui.raise_up()
             self.complete = True
 
