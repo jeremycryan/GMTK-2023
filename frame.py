@@ -12,6 +12,8 @@ from toss_ui import TossUI
 from upgrade_ui import UpgradeUI
 from zombie import *
 
+import time
+
 
 class FrameBase:
     def __init__(self, game):
@@ -231,12 +233,24 @@ class GameOverFrame(Frame):
             kills += self.game.upgrade_levels[key]
         self.text = self.font.render(f"You killed the hero {kills} times.", 1, (0, 160, 255))
         self.second_text = self.font.render(f"But you could probably do better.", 1, (255, 255, 255))
+        self.small_font = pygame.font.Font("assets/fonts/segoeui.ttf", 16)
+        self.small_text = self.small_font.render("PRESS R TO RESTART", 1, (160, 160, 160))
 
     def update(self, dt, events):
+        for event in events:
+            if event.type == pygame.K_r:
+                self.done = True
         pass
+
+    def next_frame(self):
+        self.game.upgrade_levels = {key: 0 for key in UPGRADE_NAMES}
+        return Frame(self.game)
 
     def draw(self, surf, offset=(0, 0)):
         surf.fill((255, 255, 0))
         surf.blit(self.back, (0, 0))
         surf.blit(self.text, (WINDOW_WIDTH//2 - self.text.get_width()//2, 450))
         surf.blit(self.second_text, (WINDOW_WIDTH//2 - self.second_text.get_width()//2, 450 + self.text.get_height()))
+
+        if time.time()% 1 > 0.3:
+            surf.blit(self.small_text, (WINDOW_WIDTH//2 - self.small_text.get_width()//2, WINDOW_HEIGHT - self.small_text.get_height() - 5))
