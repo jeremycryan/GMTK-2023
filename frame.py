@@ -93,7 +93,7 @@ class Frame(FrameBase):
             for i in range(2):
                 self.spawn_queue.append(ToughZombie(self, *self.get_spawner()))
         elif self.level == 4:
-            for i in range(4):
+            for i in range(3):
                 self.spawn_queue.append(Zombie(self, *self.get_spawner()))
             for i in range(1):
                 self.spawn_queue.append(BigZombie(self, *self.get_spawner()))
