@@ -124,13 +124,14 @@ class TossUI:
         self.grab_point = pygame.mouse.get_pos()
         zombie.grabbed = True
 
-    def release_zombie(self):
+    def release_zombie(self, launch=True):
         if self.grabbed:
             self.grabbed.grabbed = False
             self.grab_offset = self.mpos[0] - self.grabbed.x, self.mpos[1] - self.grabbed.y
             throw_strength = self.grab_offset_to_throw_strength(self.grab_offset)
-            self.grabbed.vx = throw_strength[0]
-            self.grabbed.vy = throw_strength[1]
-            self.grabbed.on_become_ballistic()
+            if launch:
+                self.grabbed.vx = throw_strength[0]
+                self.grabbed.vy = throw_strength[1]
+                self.grabbed.on_become_ballistic()
             self.grabbed = None
         self.active = False
