@@ -45,7 +45,7 @@ class Game:
                 current_frame.load()
 
     def get_events(self):
-        dt = self.clock.tick(c.FPS)/1000
+        dt = self.clock.tick()/1000
 
         events = pygame.event.get()
         for event in events:

@@ -134,63 +134,87 @@ class Grid:
         coords = []
         for x in (-1, 0, 1):
             for y in (-1, 0, 1):
-                if x + tx < 0 or y + ty < 0 or x + tx >= len(self.tiles[0]) or y + ty >= len(self.tiles):
+                real_x = x + tx
+                real_y = y + ty
+                if real_x < 0 or real_y < 0 or real_x >= len(self.tiles[0]) or real_y >= len(self.tiles):
                     coords.append((x, y))
                     continue
-                if self.tile_is_solid(self.tiles[ty+y][tx+x]):
+                if self.tile_is_solid(self.tiles[real_y][real_x]):
                     coords.append((x, y))
                     continue
                 # not solid
         return coords
 
     def tile_to_surf(self, tx, ty):
-        neighbors = self.get_solid_neighbors(tx, ty)
+        neighbors = set(self.get_solid_neighbors(tx, ty))
         solid = c.SELF in neighbors
         if not solid:
             return self.tile_surfs[Tile.AIR]
         sheet_coord = (1, 1)
-        if c.RIGHT in neighbors and c.DOWN in neighbors and c.LEFT not in neighbors and c.UP not in neighbors:
-            sheet_coord = (0, 0)
-        elif c.LEFT in neighbors and c.RIGHT in neighbors and c.DOWN in neighbors and c.UP not in neighbors:
-            sheet_coord = (1, 0)
-        elif c.LEFT in neighbors and c.DOWN in neighbors and c.UP not in neighbors and c.RIGHT not in neighbors:
-            sheet_coord = (2, 0)
-        elif c.LEFT not in neighbors and c.UP in neighbors and c.DOWN in neighbors and c.RIGHT in neighbors:
-            sheet_coord = (0, 1)
-        elif c.LEFT in neighbors and c.RIGHT not in neighbors and c.UP in neighbors and c.DOWN in neighbors:
-            sheet_coord = (2, 1)
-        elif c.LEFT not in neighbors and c.RIGHT in neighbors and c.UP in neighbors and c.DOWN not in neighbors:
-            sheet_coord = (0, 2)
-        elif c.LEFT in neighbors and c.RIGHT in neighbors and c.UP in neighbors and c.DOWN not in neighbors:
-            sheet_coord = (1, 2)
-        elif c.LEFT in neighbors and c.RIGHT not in neighbors and c.UP in neighbors and c.DOWN not in neighbors:
-            sheet_coord = (2, 2)
-        elif c.LEFT not in neighbors and c.RIGHT not in neighbors and c.DOWN not in neighbors and c.UP in neighbors:
-            sheet_coord = (0, 3)
-        elif c.LEFT in neighbors and c.RIGHT not in neighbors and c.UP not in neighbors and c.DOWN not in neighbors:
-            sheet_coord = (1, 3)
-        elif c.LEFT not in neighbors and c.RIGHT not in neighbors and c.DOWN in neighbors and c.UP not in neighbors:
-            sheet_coord = (2, 3)
-        elif c.LEFT not in neighbors and c.RIGHT not in neighbors and c.UP not in neighbors and c.DOWN not in neighbors:
-            sheet_coord = (3, 0)
-        elif c.LEFT in neighbors and c.RIGHT in neighbors and c.UP not in neighbors and c.DOWN not in neighbors:
-            sheet_coord = (3, 1)
-        elif c.LEFT not in neighbors and c.RIGHT not in neighbors and c.UP in neighbors and c.DOWN in neighbors:
-            sheet_coord = (3, 2)
-        elif c.LEFT not in neighbors and c.RIGHT in neighbors and c.UP not in neighbors and c.DOWN not in neighbors:
-            sheet_coord = (3, 3)
-        elif c.LEFT in neighbors and c.RIGHT in neighbors and c.UP in neighbors and c.DOWN in neighbors:
-            # blank or internal corner
-            if c.UP_RIGHT not in neighbors:
-                sheet_coord = (4, 0)
-            elif c.UP_LEFT not in neighbors:
-                sheet_coord = (4, 1)
-            elif c.DOWN_LEFT not in neighbors:
-                sheet_coord = (4, 2)
-            elif c.DOWN_RIGHT not in neighbors:
-                sheet_coord = (4, 3)
+        if c.LEFT in neighbors:
+            if c.RIGHT in neighbors:
+                if c.UP in neighbors:
+                    if c.DOWN not in neighbors:
+                        sheet_coord = (1, 2)
+                    else:
+                        # blank or internal corner
+                        if c.UP_RIGHT not in neighbors:
+                            sheet_coord = (4, 0)
+                        elif c.UP_LEFT not in neighbors:
+                            sheet_coord = (4, 1)
+                        elif c.DOWN_LEFT not in neighbors:
+                            sheet_coord = (4, 2)
+                        elif c.DOWN_RIGHT not in neighbors:
+                            sheet_coord = (4, 3)
+                        else:
+                            sheet_coord = (1, 1)
+                else:
+                    if c.DOWN in neighbors:
+                        sheet_coord = (1, 0)
+                    else:
+                        sheet_coord = (3, 1)
             else:
-                sheet_coord = (1, 1)
+                if c.UP in neighbors:
+                    if c.DOWN not in neighbors:
+                        sheet_coord = (2, 2)
+                    else:
+                        sheet_coord = (2, 1)
+                else:
+                    if c.DOWN in neighbors:
+                        sheet_coord = (2, 0)
+                    else:
+                        sheet_coord = (1, 3)
+        else:
+            if c.RIGHT in neighbors:
+                if c.UP in neighbors:
+                    if c.DOWN in neighbors:
+                        sheet_coord = (0, 1)
+                    else:
+                        sheet_coord = (0, 2)
+                else:
+                    if c.DOWN in neighbors:
+                        sheet_coord = (0, 0)
+                    else:
+                        sheet_coord = (3, 3)
+            else:
+                if c.UP in neighbors:
+                    if c.DOWN not in neighbors:
+                        sheet_coord = (0, 3)
+                    else:
+                        sheet_coord = (3, 2)
+                else:
+                    if c.DOWN in neighbors:
+                        sheet_coord = (2, 3)
+                    else:
+                        sheet_coord = (3, 0)
+
+
+
+
+
+
+
+
         return self.tile_surface_array[sheet_coord]
 
 

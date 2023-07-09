@@ -100,7 +100,7 @@ class Frame(FrameBase):
     def draw(self, surface, offset=(0, 0)):
         #surface.fill((100, 0, 0))
         self.background.draw(surface, offset)
-        self.grid.draw(surface, offset, only=[Tile.AIR])
+        # self.grid.draw(surface, offset, only=[Tile.AIR])
         if self.level == 1:
             surface.blit(ImageManager.load("assets/images/tutorial.png"), (0, 0))
         for hero in self.heros:
