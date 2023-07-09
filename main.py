@@ -15,8 +15,12 @@ class Game:
         self.clock = pygame.time.Clock()
         SoundManager.init()
         ImageManager.init()
+        self.upgrade_levels = {key: 0 for key in c.UPGRADE_NAMES}  # TODO: clear these out on game over
 
         asyncio.run(self.main())
+
+    def get_upgrade_level(self, key):
+        return self.upgrade_levels[key] if key in self.upgrade_levels else 0
 
     async def main(self):
         current_frame = f.Frame(self)

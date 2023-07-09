@@ -33,7 +33,8 @@ HERO_COOLDOWN = 0.1             # time between shots in s
 HERO_AIM_TIME = 1               # time to hold aim steady before shooting
 TARGET_PRIORITY = 0.7           # amount to prioritize switching to a closer target (0 to 1)
 SWIVEL_SPEED = 2                # gun aiming speed in rad/s
-SHOT_JITTER = 20                # maximum projectile initial offset in pixels
+SHOT_JITTER = 5                # maximum projectile initial offset in pixels
+SHOT_SPREAD = 15                # maximum projectile spread in degrees
 HERO_SPEED = 100                # hero walking speed in pixels/s
 HERO_JUMP = 500                 # hero jump speed in pixels/s
 
@@ -58,14 +59,17 @@ DOWN_RIGHT = (1, 0)
 # Upgrades
 HEALTH = 0
 RATE_OF_FIRE = 1
+ACCURACY = 2
 
 UPGRADE_NAMES = {
     HEALTH: "Thick skin",
     RATE_OF_FIRE: "Trigger lubricant",
+    ACCURACY: "Contact lenses",
 }
 
 UPGRADE_DESCRIPTIONS = {
     HEALTH: "The hero's health is increased.",
     RATE_OF_FIRE: "The hero shoots more rapidly.",
+    ACCURACY: "Reduces the hero's attack spread."
 }
 

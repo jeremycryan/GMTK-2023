@@ -106,9 +106,12 @@ class Hero(PlatformObject):
     def muzzle(self):
         """ Location of end of gun """
         x, y = self.muzzle_center()
-        muzzle_length = 85
-        x0 = x + muzzle_length*math.cos(self.aim_angle)
-        y0 = y + muzzle_length*math.sin(self.aim_angle)
+        muzzle_length = 60
+        offset = 0.18
+        if not self.facing_left():
+            offset *= -1
+        x0 = x + muzzle_length*math.cos(self.aim_angle + 0.18)
+        y0 = y + muzzle_length*math.sin(self.aim_angle + 0.18)
         return x0, y0
 
     def muzzle_center(self):
@@ -129,7 +132,7 @@ class Hero(PlatformObject):
 
         arm_surf = self.arm_sprite.get_image()
         if self.facing_left():
-            arm_offset = (40, 22)
+            arm_offset = (30, 5)
             arm_surf = pygame.transform.rotate(arm_surf, math.degrees(-self.aim_angle + math.pi))
         else:
             arm_offset = (-40, 22)
@@ -162,9 +165,10 @@ class Hero(PlatformObject):
         """ Launch a projectile """
         self.vx -= math.cos(self.aim_angle) * RECOIL
         x, y = self.muzzle()
+        angle = self.aim_angle + random.random() * math.radians(SHOT_SPREAD) * 2 - math.radians(SHOT_SPREAD)
         dx, dy = math.sin(self.aim_angle), -math.cos(self.aim_angle)
         d = (random.random() - .5) * 2 * SHOT_JITTER
-        self.frame.projectiles.append(Projectile(self.frame, x + dx * d, y + dy * d, self.aim_angle))
+        self.frame.projectiles.append(Projectile(self.frame, x + dx * d, y + dy * d, angle))
 
     def get_zombie(self, max_dist=1000):
         """ Get the closest zombie within line-of-sight, prioritizing previous target """
