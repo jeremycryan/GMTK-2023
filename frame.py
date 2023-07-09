@@ -111,20 +111,20 @@ class Frame(FrameBase):
                 self.particles.remove(particle)
         dt = self.toss_ui.adjust_time(dt)
 
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
-                    self.zombies = []
-                    self.spawn_queue = []
-                if event.key == pygame.K_l:
-                    self.heros = []
-                if self.level_end or self.victory and event.key == pygame.K_RETURN:
-                    self.done = True
-                    if self.victory:
-                        self.level = 1
-                        self.game.upgrade_levels = {key: 0 for key in UPGRADE_NAMES}
-                if event.key == pygame.K_s:
-                    self.shake(15)
+        # for event in events:
+        #     if event.type == pygame.KEYDOWN:
+        #         if event.key == pygame.K_p:
+        #             self.zombies = []
+        #             self.spawn_queue = []
+        #         if event.key == pygame.K_l:
+        #             self.heros = []
+        #         if self.level_end or self.victory and event.key == pygame.K_RETURN:
+        #             self.done = True
+        #             if self.victory:
+        #                 self.level = 1
+        #                 self.game.upgrade_levels = {key: 0 for key in UPGRADE_NAMES}
+        #         if event.key == pygame.K_s:
+        #             self.shake(15)
         self.zombie_sound_timer += math.sqrt(max(4, len(self.zombies)) * dt/1000)
         if self.zombie_sound_timer > 1 + random.random() * 1:
             i = random.randint(1, 5)
