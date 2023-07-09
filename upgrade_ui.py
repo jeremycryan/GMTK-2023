@@ -65,10 +65,10 @@ class UpgradeUI:
             if event.type == pygame.MOUSEBUTTONUP:
                 if self.active:
                     events.remove(event)
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_o:
-                    self.frame.complete = True
-                    self.raise_up()
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_o:
+            #         self.frame.complete = True
+            #         self.raise_up()
 
         self.update_hover()
 
