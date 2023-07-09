@@ -46,14 +46,15 @@ class ImageManager:
         :return: The surface. This is likely the same reference others are using, so don't be destructive.
         """
         ImageManager.check_initialized()
-        if path in ImageManager.sounds:
-            return ImageManager.sounds[path]
+        path_key = path + str(scale_by)
+        if path_key in ImageManager.sounds:
+            return ImageManager.sounds[path_key]
         sound = pygame.image.load(path).convert_alpha()
         if scale_by != 1:
             w = int(sound.get_width()*scale_by)
             h = int(sound.get_height()*scale_by)
             sound = pygame.transform.scale(sound, (w, h))
-        ImageManager.sounds[path] = sound
+        ImageManager.sounds[path_key] = sound
         return sound
 
     @staticmethod

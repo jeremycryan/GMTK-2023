@@ -17,8 +17,8 @@ class Zombie(PlatformObject):
     GRABBED = 3
     LANDING = 4
 
-    def __init__(self, frame, x, y):
-        super().__init__(frame, x, y, 52, 52, r=26)
+    def __init__(self, frame, x, y, w=52, h=52, scale_by=0.5):
+        super().__init__(frame, x, y, w, h, r=w/2)
 
         self.sprite = Sprite(12)
         self.state = Zombie.IDLE
@@ -28,8 +28,8 @@ class Zombie(PlatformObject):
         self.cooldown = 0
         self.damage = 1
         self.dead = False
+        self.speed = ZOMBIE_SPEED
 
-        scale_by = 0.5
         fling = Animation(ImageManager.load("assets/images/ZR Throw 12fps.png", scale_by=scale_by), (4, 1), 4)
         fling_right = Animation(ImageManager.load("assets/images/ZR Throw 12fps.png", scale_by=scale_by), (4, 1), 4, reverse_x=True)
         idle = Animation(ImageManager.load("assets/images/ZR Walk 6fps.png", scale_by=scale_by), (6, 1), 6, time_scaling = .8)
@@ -95,13 +95,13 @@ class Zombie(PlatformObject):
 
         if not self.ballistic and not self.grabbed and not self.state == Zombie.LANDING:
             if self.vx_des > 0:
-                self.vx_des = ZOMBIE_SPEED
+                self.vx_des = self.speed
                 self.sprite.start_animation("idle_right", restart_if_active=False)
             elif self.vx_des < 0:
-                self.vx_des = -ZOMBIE_SPEED
+                self.vx_des = -self.speed
                 self.sprite.start_animation("idle_left", restart_if_active=False)
             else:
-                self.vx_des = ZOMBIE_SPEED if random.random() > 0.5 else -ZOMBIE_SPEED
+                self.vx_des = self.speed if random.random() > 0.5 else -self.speed
         self.sprite.update(dt, events)
 
         if self.state == Zombie.IDLE:
@@ -148,7 +148,7 @@ class Zombie(PlatformObject):
         else:
             self.sprite.start_animation("falling_left")
         self.state = Zombie.BALLISTIC
-        self.vx_des = math.copysign(ZOMBIE_SPEED, self.vx)
+        self.vx_des = math.copysign(self.speed, self.vx)
 
     def on_become_grounded(self):
         super().on_become_grounded()
@@ -186,3 +186,10 @@ class Zombie(PlatformObject):
                 self.vx += math.copysign(ZOMBIE_KNOCKBACK, self.x - hero.x)
                 self.cooldown = ZOMBIE_COOLDOWN
                 break
+
+
+class BigZombie(Zombie):
+    def __init__(self, frame, x, y):
+        s = 1.4
+        super().__init__(frame, x, y, w=int(52 * s), h=int(52 * s), scale_by=s/2)
+        self.hp = 5

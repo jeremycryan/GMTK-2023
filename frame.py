@@ -9,7 +9,7 @@ from hero import Hero
 from image_manager import ImageManager
 from toss_ui import TossUI
 from upgrade_ui import UpgradeUI
-from zombie import Zombie
+from zombie import Zombie, BigZombie
 
 
 class FrameBase:
@@ -57,14 +57,19 @@ class Frame(FrameBase):
         self.victory_text = self.stage_clear_font.render("Victory!", True, (255, 255, 255))
 
     def load_zombies(self):
+        self.spawner_count = 0
         if self.level == 1:
             for i in range(4):
-                spawner = self.grid.tile_to_world(self.zombie_spawners[i % len(self.zombie_spawners)])
-                self.spawn_queue.append(Zombie(self, *spawner))
+                self.spawn_queue.append(Zombie(self, *self.get_spawner()))
         elif self.level == 2:
-            for i in range(6):
-                spawner = self.grid.tile_to_world(self.zombie_spawners[i % len(self.zombie_spawners)])
-                self.spawn_queue.append(Zombie(self, *spawner))
+            for i in range(2):
+                self.spawn_queue.append(Zombie(self, *self.get_spawner()))
+            for i in range(2):
+                self.spawn_queue.append(BigZombie(self, *self.get_spawner()))
+
+    def get_spawner(self):
+        self.spawner_count += 1
+        return self.grid.tile_to_world(self.zombie_spawners[(self.spawner_count-1) % len(self.zombie_spawners)])
 
     def update(self, dt, events):
         for event in events:
