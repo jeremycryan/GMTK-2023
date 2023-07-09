@@ -183,5 +183,6 @@ class Zombie(PlatformObject):
                 # TODO: attack animation
                 hero.hit(self.damage)
                 hero.vx += math.copysign(ZOMBIE_KNOCKBACK, self.vx_des)
+                self.vx += math.copysign(ZOMBIE_KNOCKBACK, self.x - hero.x)
                 self.cooldown = ZOMBIE_COOLDOWN
                 break

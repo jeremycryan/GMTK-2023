@@ -29,6 +29,7 @@ class Hero(PlatformObject):
         self.max_hp = self.hp
         self.location = None
         self.destination = None
+        self.retarget_timer = 0
 
         self.sprite = Sprite(12)
         idle = Animation(ImageManager.load("assets/images/man run temp 6fps.png", 0.5), (4, 1), 4)
@@ -91,7 +92,10 @@ class Hero(PlatformObject):
         if self.ballistic:
             self.vx = self.vx_des
         # Select target
-        self.target, self.target_angle = self.get_zombie()
+        self.retarget_timer -= dt
+        if self.retarget_timer <= 0:
+            self.target, self.target_angle = self.get_zombie()
+            self.retarget_timer = 0.3
         # Default to swivel aim if no target found
         if not self.target:
             self.target_angle = math.pi if self.facing_left() else 0
