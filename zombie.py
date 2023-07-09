@@ -93,6 +93,7 @@ class Zombie(PlatformObject):
     def on_hit(self):
         self.sprite.start_animation(self.paused)
         self.paused = None
+        self.squash = 1
 
     def die(self):
         self.grabbed = False
@@ -154,7 +155,9 @@ class Zombie(PlatformObject):
                 self.agape = False
                 if not self.paused:
                     self.sprite.start_animation(f"falling_{direction}", restart_if_active=False)
-                self.squash = max(1/(1 + abs(self.vy)*0.0005), 0.7)
+                    self.squash = max(1/(1 + abs(self.vy)*0.0005), 0.7)
+        if self.paused:
+            self.squash = 1
 
         if self.grabbed:
             self.sprite.start_animation(f"hold_{direction}", restart_if_active=False)
