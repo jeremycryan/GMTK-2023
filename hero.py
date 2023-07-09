@@ -25,25 +25,28 @@ class Hero(PlatformObject):
         self.clip = 10
         self.target = None
         self.t = 0
-        self.hp = 5 + self.frame.game.upgrade_levels[HEALTH]
+        self.hp = 3 + self.frame.game.upgrade_levels[HEALTH]
+        self.max_hp = self.hp
         self.location = None
         self.destination = None
 
         self.sprite = Sprite(12)
-        idle = Animation(ImageManager.load("assets/images/man idle revamp temp.png", 0.5), (1, 1), 1)
-        idle_right = Animation(ImageManager.load("assets/images/man idle revamp temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        idle = Animation(ImageManager.load("assets/images/man run temp 6fps.png", 0.5), (4, 1), 4)
+        idle_right = Animation(ImageManager.load("assets/images/man run temp 6fps.png", 0.5), (4, 1), 4, reverse_x=True)
         jump = Animation(ImageManager.load("assets/images/Man Jump temp.png", 0.5), (1, 1), 1)
         jump_right = Animation(ImageManager.load("assets/images/Man Jump temp.png", 0.5), (1, 1), 1, reverse_x=True)
         fall = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1)
         fall_right = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1, reverse_x=True)
         self.sprite.add_animation({
-            "idle_left":idle,
-            "idle_right":idle_right,
             "jump_left":jump,
             "jump_right":jump_right,
             "fall_left":fall,
             "fall_right":fall_right,
         })
+        self.sprite.add_animation({
+            "idle_left": idle,
+            "idle_right": idle_right,
+        }, loop=True, fps_override=6)
         self.sprite.start_animation("idle_left")
 
         self.arm_sprite = Sprite(12)
@@ -60,7 +63,10 @@ class Hero(PlatformObject):
         self.arm_sprite.start_animation("aiming_left")
 
     def facing_left(self):
-        return (math.pi/2) < self.aim_angle%(2*math.pi) < (3*math.pi/2)
+        if self.target:
+            return (math.pi/2) < self.aim_angle%(2*math.pi) < (3*math.pi/2)
+        else:
+            return self.vx <= 0
 
     def update(self, dt, events):
         super().update(dt, events)
@@ -74,7 +80,7 @@ class Hero(PlatformObject):
         # Update navigation
         self.navigate()
         if self.destination:
-            self.vx_des = math.copysign(HERO_SPEED, self.destination[0] - self.location[0])
+            self.vx_des = math.copysign(HERO_SPEED + 40* self.frame.game.upgrade_levels[WALK_SPEED], self.destination[0] - self.location[0])
             if not self.ballistic and self.destination[1] < self.location[1]:
                 self.vy -= HERO_JUMP
         else:
@@ -85,10 +91,11 @@ class Hero(PlatformObject):
         self.target, self.target_angle = self.get_zombie()
         # Default to swivel aim if no target found
         if not self.target:
-            if math.cos(self.aim_angle) > 0:
-                self.target_angle = math.sin(self.t * 2) * 0.1
-            else:
-                self.target_angle = math.pi + math.sin(self.t * 2) * 0.1
+            self.target_angle = math.pi if self.facing_left() else 0
+            # if math.cos(self.aim_angle) > 0:
+            #     self.target_angle = math.sin(self.t * 2) * 0.1
+            # else:
+            #     self.target_angle = math.pi + math.sin(self.t * 2) * 0.1
             self.cooldown = 0
             self.aim_time = HERO_AIM_TIME
         # Face towards target
@@ -116,10 +123,8 @@ class Hero(PlatformObject):
         if not self.ballistic:
             if self.facing_left():
                 self.sprite.start_animation("idle_left", restart_if_active=False)
-                self.arm_sprite.start_animation("aiming_left", restart_if_active=False)
             else:
                 self.sprite.start_animation("idle_right", restart_if_active=False)
-                self.arm_sprite.start_animation("aiming_right", restart_if_active=False)
         else:
             if self.facing_left() and self.vy < 0:
                 self.sprite.start_animation("jump_left", restart_if_active=False)
@@ -129,6 +134,17 @@ class Hero(PlatformObject):
                 self.sprite.start_animation("jump_right", restart_if_active=False)
             else:
                 self.sprite.start_animation("fall_right", restart_if_active=False)
+
+        if self.facing_left():
+            if self.target:
+                self.arm_sprite.start_animation("aiming_left", restart_if_active=False)
+            else:
+                self.arm_sprite.start_animation("standby_left", restart_if_active=False)
+        else:
+            if self.target:
+                self.arm_sprite.start_animation("aiming_right", restart_if_active=False)
+            else:
+                self.arm_sprite.start_animation("standby_right", restart_if_active=False)
 
 
     def muzzle(self):
@@ -154,9 +170,10 @@ class Hero(PlatformObject):
         return muz[0] * length_down + muz_rot[0] * (1-length_down), muz[1] * length_down + muz_rot[1] * (1 - length_down)
 
     def draw(self, surface, offset):
-        pygame.draw.rect(surface, (255, 0, 0), self.get_rect(offset), 2)
+        #pygame.draw.rect(surface, (255, 0, 0), self.get_rect(offset), 2)
         x, y = self.raycast(self.muzzle(), self.aim_angle)
-        pygame.draw.line(surface, (255, 0, 0), (self.muzzle()), (x, y), 2)
+        if self.target:
+            pygame.draw.line(surface, (255, 0, 0), (self.muzzle()), (x, y), 2)
 
         arm_surf = self.arm_sprite.get_image()
         if self.facing_left():
@@ -179,6 +196,18 @@ class Hero(PlatformObject):
         self.sprite.x = self.x
         self.sprite.y = self.y
         self.sprite.draw(surface, offset)
+
+        spacing = 10
+        x = self.x + self.max_hp*spacing/2 - 20
+        y = self.y - 75
+        for i in list(range(self.max_hp))[::-1]:
+            if self.hp > i:
+                surf = ImageManager.load("assets/images/heart full.png", 0.3)
+            else:
+                surf = ImageManager.load("assets/images/heart empty.png", 0.3)
+            surface.blit(surf, (x, y))
+            x -= spacing
+
 
 
     def raycast(self, origin, angle, step=1, max_length=2000):
@@ -218,6 +247,8 @@ class Hero(PlatformObject):
 
     def hit(self, damage):
         self.hp -= damage
+        if self.hp < 0:
+            self.hp = 0
         # TODO: damage animation
 
     def navigate(self):

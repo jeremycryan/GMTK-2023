@@ -28,7 +28,7 @@ class TossUI:
         self.mpos = pygame.mouse.get_pos()
         self.mvel = (0, 0)
         self.grab_offset = (0, 0)
-        self.throrrow = ImageManager.load("assets/images/thorrow.png", scale_by=0.5)
+        self.throrrow = pygame.transform.rotate(ImageManager.load("assets/images/arrow.png", scale_by=0.5), -90)
 
     def hovered_zombie(self):
         hovered = None
@@ -63,8 +63,8 @@ class TossUI:
             scale = mag/TossUI.MAX_THROW_SPEED
             surf = pygame.transform.scale(self.throrrow, (self.throrrow.get_width()*scale, self.throrrow.get_height()*scale))
             surf = pygame.transform.rotate(surf, (angle*180/math.pi))
-            x = self.grabbed.x + xoff - surf.get_width()//2
-            y = self.grabbed.y + yoff - surf.get_height()//2
+            x = self.grabbed.x + xoff - surf.get_width()//2 + math.cos(angle)*25
+            y = self.grabbed.y + yoff - surf.get_height()//2 - math.sin(angle)*25
             dest.blit(surf, (x, y))
             self.grabbed.draw(dest, offset)
 

@@ -22,7 +22,7 @@ class Zombie(PlatformObject):
 
         self.sprite = Sprite(12)
         self.state = Zombie.IDLE
-        self.hp = 5
+        self.hp = 2
         self.death_time = 0.2
         self.grabbed = False
         self.cooldown = 0

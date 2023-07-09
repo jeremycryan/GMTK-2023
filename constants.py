@@ -61,18 +61,21 @@ HEALTH = 0
 RATE_OF_FIRE = 1
 ACCURACY = 2
 LEFTY = 3
+WALK_SPEED = 4
 
 UPGRADE_NAMES = {
     HEALTH: "Thick skin",
     RATE_OF_FIRE: "Trigger lubricant",
     ACCURACY: "Contact lenses",
     LEFTY: "Lefty",
+    WALK_SPEED: "Comfy footwear",
 }
 
 UPGRADE_DESCRIPTIONS = {
     HEALTH: "The hero's health is increased.",
     RATE_OF_FIRE: "The hero shoots more rapidly.",
-    ACCURACY: "Reduces the hero's attack spread.",
-    LEFTY: "More dangerous with left hand;\nless dangerous with right."
+    ACCURACY: "The hero's shots are more accurate.",
+    LEFTY: "More dangerous with left hand;\nless dangerous with right.",
+    WALK_SPEED: "The hero can move faster.",
 }
 

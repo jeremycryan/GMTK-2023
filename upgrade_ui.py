@@ -105,14 +105,14 @@ class UpgradeUI:
         if (self.activeness <= 0 and not self.frame.complete) and self.age > UpgradeUI.FADE_IN_TIME:
             return
 
-        self.shade.set_alpha(180*self.activeness)
+        self.shade.set_alpha(210*self.activeness)
         self.over_shade.set_alpha(0)
         if self.age < UpgradeUI.FADE_IN_TIME:
             self.over_shade.set_alpha(255 * (1 - self.age/self.FADE_IN_TIME))
             surf.blit(self.over_shade, (0, 0))
             return
         if self.active == False and self.frame.complete:
-            self.shade.set_alpha(180)
+            self.shade.set_alpha(210)
             self.over_shade.set_alpha(255 * (1 - self.activeness))
         surf.blit(self.shade, (0, 0))
 

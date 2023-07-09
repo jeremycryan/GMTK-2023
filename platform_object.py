@@ -31,6 +31,7 @@ class PlatformObject:
 
     def draw(self, surface, offset):
         """ Render placeholder graphics """
+        return
         if self.ballistic:
             pygame.draw.circle(surface, (255, 0, 0), (self.x + offset[0], self.y + offset[1]), self.r, 2)
         else:

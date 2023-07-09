@@ -6,6 +6,7 @@ from background import Background
 from constants import *
 from grid import Grid, Tile
 from hero import Hero
+from image_manager import ImageManager
 from toss_ui import TossUI
 from upgrade_ui import UpgradeUI
 from zombie import Zombie
@@ -100,6 +101,8 @@ class Frame(FrameBase):
         #surface.fill((100, 0, 0))
         self.background.draw(surface, offset)
         self.grid.draw(surface, offset, only=[Tile.AIR])
+        if self.level == 1:
+            surface.blit(ImageManager.load("assets/images/tutorial.png"), (0, 0))
         for hero in self.heros:
             hero.draw(surface, offset)
         for zombie in self.zombies:
