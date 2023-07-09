@@ -130,8 +130,8 @@ class TossUI:
             self.grab_offset = self.mpos[0] - self.grabbed.x, self.mpos[1] - self.grabbed.y
             throw_strength = self.grab_offset_to_throw_strength(self.grab_offset)
             if launch:
-                self.grabbed.vx = throw_strength[0]
-                self.grabbed.vy = throw_strength[1]
+                self.grabbed.vx = throw_strength[0] * self.grabbed.launch_speed
+                self.grabbed.vy = throw_strength[1] * self.grabbed.launch_speed
                 self.grabbed.on_become_ballistic()
             self.grabbed = None
         self.active = False

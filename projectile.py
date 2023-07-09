@@ -49,6 +49,7 @@ class Projectile:
                 self.zombies_hit.add(zombie)
                 if len(self.zombies_hit) >= self.frame.game.upgrade_levels[PIERCE] + 1:
                     self.hit = True
+                break
 
     def draw(self, surface, offset):
         if self.hit:
