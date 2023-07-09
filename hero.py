@@ -67,6 +67,11 @@ class Hero(PlatformObject):
             "standby_right": standby_right,
         })
         self.arm_sprite.start_animation("aiming_left")
+        self.r = 50
+
+    def on_become_grounded(self):
+        super().on_become_grounded()
+        self.frame.shake(8)
 
     def facing_left(self):
         return (math.pi / 2) < self.aim_angle % (2 * math.pi) < (3 * math.pi / 2)

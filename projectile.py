@@ -3,6 +3,7 @@ import math
 import pygame.draw
 
 from constants import *
+from particle import Spatter
 
 
 class Projectile:
@@ -41,6 +42,9 @@ class Projectile:
                 zombie.vx += self.vx * BULLET_FORCE
                 if zombie.ballistic:
                     zombie.vy += self.vy * BULLET_FORCE
+                vmag = math.sqrt(self.vx**2 + self.vy**2)
+                vnorm = self.vx/vmag, self.vy/vmag
+                self.frame.particles.append(Spatter((zombie.x + vnorm[0]*zombie.r, zombie.y + vnorm[1]*zombie.r), math.degrees(math.atan2(-vnorm[1], vnorm[0]))))
                 zombie.hit(self.damage)
                 self.zombies_hit.add(zombie)
                 if len(self.zombies_hit) >= self.frame.game.upgrade_levels[PIERCE] + 1:

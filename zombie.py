@@ -157,6 +157,7 @@ class Zombie(PlatformObject):
         direction = "left" if ("left" in self.sprite.active_animation_key) else "right"
         self.sprite.start_animation(f"land_{direction}")
         self.state = Zombie.LANDING
+        self.frame.shake(3)
 
     def on_land(self, left=True):
         if left:
@@ -195,3 +196,7 @@ class BigZombie(Zombie):
         s = 1.4
         super().__init__(frame, x, y, w=int(52 * s), h=int(52 * s), scale_by=s/2)
         self.hp = 5
+
+    def on_become_grounded(self):
+        super().on_become_grounded()
+        self.frame.shake(7)

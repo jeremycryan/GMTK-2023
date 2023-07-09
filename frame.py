@@ -59,6 +59,7 @@ class Frame(FrameBase):
         self.stage_clear_font = pygame.font.Font("assets/fonts/edge_of_the_galaxy.otf", 70)
         self.stage_clear_text = self.stage_clear_font.render("Stage Cleared!", True, (255, 255, 255))
         self.victory_text = self.stage_clear_font.render("Victory!", True, (255, 255, 255))
+        self.particles = []
 
     def load_zombies(self):
         self.spawner_count = 0
@@ -101,6 +102,10 @@ class Frame(FrameBase):
         self.update_shake(dt, events)
         self.upgrade_ui.update(dt, events)
         self.toss_ui.update(dt, events)
+        for particle in self.particles[:]:
+            particle.update(dt, events)
+            if particle.destroyed:
+                self.particles.remove(particle)
         dt = self.toss_ui.adjust_time(dt)
         if self.since_freeze < 0:
             dt *= 0.001
@@ -136,6 +141,7 @@ class Frame(FrameBase):
         if not len(self.heros) and not self.complete:
             self.upgrade_ui.raise_up()
             self.complete = True
+
 
     def shake(self, amt=15):
         if amt < self.shake_amp:
@@ -173,7 +179,10 @@ class Frame(FrameBase):
             zombie.draw(surface, offset)
         for projectile in self.projectiles:
             projectile.draw(surface, offset)
+
         self.grid.draw(surface, offset, only=[Tile.GROUND])
+        for particle in self.particles:
+            particle.draw(surface, offset)
         self.toss_ui.draw(surface, offset)
         self.upgrade_ui.draw(surface, offset)
         if self.victory:

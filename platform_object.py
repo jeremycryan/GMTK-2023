@@ -3,6 +3,7 @@ import math
 import pygame.draw
 
 from constants import *
+from particle import Land
 
 
 class PlatformObject:
@@ -103,6 +104,9 @@ class PlatformObject:
         pass
 
     def on_become_grounded(self):
+        particle = (Land((self.x, self.y + self.r)))
+        self.frame.particles.append(particle)
+        particle.scale = self.r/26
         pass
 
     def on_collision(self, tile_type, tile_rect):
