@@ -249,8 +249,9 @@ class GameOverFrame(Frame):
 
     def update(self, dt, events):
         for event in events:
-            if event.type == pygame.K_r:
-                self.done = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    self.done = True
         pass
 
     def next_frame(self):

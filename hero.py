@@ -84,7 +84,8 @@ class Hero(PlatformObject):
 
     def on_become_grounded(self):
         super().on_become_grounded()
-        SoundManager.load("assets/audio/man_landing_thud.ogg").play()
+        sound = SoundManager.load("assets/audio/man_landing_thud.ogg")
+        sound.set_volume(0.5)
         self.frame.shake(8)
 
     def facing_left(self):
@@ -154,7 +155,7 @@ class Hero(PlatformObject):
             if self.cooldown <= 0 and self.target:
                 self.cooldown = self.base_cooldown
                 if self.frame.game.upgrade_levels[LEFTY]:
-                    if self.facing_left():
+                    if not self.facing_left():
                         self.cooldown /= 2
                     else:
                         self.cooldown *= 2
