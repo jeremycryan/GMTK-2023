@@ -63,6 +63,7 @@ ACCURACY = 2
 LEFTY = 3
 WALK_SPEED = 4
 PIERCE = 5
+KNOCK = 6
 
 UPGRADE_NAMES = {
     HEALTH: "Thick skin",
@@ -70,7 +71,8 @@ UPGRADE_NAMES = {
     ACCURACY: "Contact lenses",
     LEFTY: "Lefty",
     WALK_SPEED: "Comfy footwear",
-    PIERCE: "Sharpened bullets"
+    PIERCE: "Sharpened bullets",
+    KNOCK: "High caliber"
 }
 
 UPGRADE_DESCRIPTIONS = {
@@ -79,6 +81,7 @@ UPGRADE_DESCRIPTIONS = {
     ACCURACY: "The hero's shots are more accurate.",
     LEFTY: "More dangerous with left hand;\nless dangerous with right.",
     WALK_SPEED: "The hero can move faster.",
-    PIERCE: "Shots can pierce through monsters."
+    PIERCE: "Shots can pierce through monsters.",
+    KNOCK: "Shots launch zombies further."
 }
-MAX_LEVEL = 3
+MAX_LEVEL = 5

@@ -153,6 +153,11 @@ class Hero(PlatformObject):
             self.cooldown -= dt
             if self.cooldown <= 0 and self.target:
                 self.cooldown = self.base_cooldown
+                if self.frame.game.upgrade_levels[LEFTY]:
+                    if self.facing_left():
+                        self.cooldown /= 2
+                    else:
+                        self.cooldown *= 2
                 self.shoot()
 
         if not self.ballistic:

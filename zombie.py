@@ -209,7 +209,7 @@ class Zombie(PlatformObject):
                 self.sprite.start_animation("hit_left")
         self.hp -= damage
         self.frame.shake(15)
-        self.frame.freeze(0.25)
+        self.frame.freeze(0.125)
         i = random.randint(1, 4)
         SoundManager.load(f"assets/audio/ZR_hurt_{i}.ogg").play()
 

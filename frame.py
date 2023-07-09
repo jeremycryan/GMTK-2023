@@ -112,6 +112,8 @@ class Frame(FrameBase):
                 if event.key == pygame.K_p:
                     self.zombies = []
                     self.spawn_queue = []
+                if event.key == pygame.K_l:
+                    self.heros = []
                 if self.level_end or self.victory and event.key == pygame.K_RETURN:
                     self.done = True
                     if self.victory:

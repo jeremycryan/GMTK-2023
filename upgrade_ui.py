@@ -143,6 +143,14 @@ class UpgradeUI:
     def get_upgrade_surfs(self):
         surfs = []
         possible_upgrades = list(c.UPGRADE_NAMES)
+        if self.frame.game.upgrade_levels[c.WALK_SPEED] >= 2:
+            possible_upgrades.remove(c.WALK_SPEED)
+        if self.frame.game.upgrade_levels[c.ACCURACY] >= 2:
+            possible_upgrades.remove(c.ACCURACY)
+        if self.frame.game.upgrade_levels[c.PIERCE] >= 3:
+            possible_upgrades.remove(c.PIERCE)
+        if self.frame.game.upgrade_levels[c.LEFTY] >= 1:
+            possible_upgrades.remove(c.LEFTY)
         for i in range(3):
             if not possible_upgrades:
                 continue
