@@ -10,6 +10,7 @@ from platform_object import PlatformObject
 from projectile import Projectile
 
 from pyracy.sprite_tools import Sprite, Animation
+from sound_manager import SoundManager
 
 
 class Hero(PlatformObject):
@@ -31,6 +32,18 @@ class Hero(PlatformObject):
         self.destination = None
         self.retarget_timer = 0
         self.flip_timer = 0
+        SoundManager.load("assets/audio/gunshot_1.ogg")
+        SoundManager.load("assets/audio/gunshot_2.ogg")
+        SoundManager.load("assets/audio/gunshot_3.ogg")
+        SoundManager.load("assets/audio/gunshot_4.ogg")
+        SoundManager.load("assets/audio/man_death.ogg")
+        SoundManager.load("assets/audio/man_dying_breaths.ogg")
+        SoundManager.load("assets/audio/man_initial_land.ogg")
+        SoundManager.load("assets/audio/man_jump_1.ogg")
+        SoundManager.load("assets/audio/man_jump_2.ogg")
+        SoundManager.load("assets/audio/man_jump_3.ogg")
+        SoundManager.load("assets/audio/man_jump_4.ogg")
+        SoundManager.load("assets/audio/man_landing_thud.ogg")
 
         self.sprite = Sprite(12)
         idle = Animation(ImageManager.load("assets/images/man run temp 6fps.png", 0.5), (4, 1), 4)
@@ -71,6 +84,7 @@ class Hero(PlatformObject):
 
     def on_become_grounded(self):
         super().on_become_grounded()
+        SoundManager.load("assets/audio/man_landing_thud.ogg").play()
         self.frame.shake(8)
 
     def facing_left(self):
@@ -85,6 +99,8 @@ class Hero(PlatformObject):
         if self.hp <= 0:
             self.frame.heros.remove(self)
             # TODO: death animation
+            SoundManager.load("assets/audio/man_death.ogg").play()
+            # SoundManager.load("assets/audio/man_dying_breaths.ogg").play()
         # Update navigation
         self.navigate()
         if self.destination:
@@ -92,6 +108,8 @@ class Hero(PlatformObject):
                                         self.destination[0] - self.location[0])
             if not self.ballistic and self.destination[1] < self.location[1]:
                 self.vy -= HERO_JUMP
+                i = random.randint(1, 4)
+                SoundManager.load(f"assets/audio/man_jump_{i}.ogg").play()
         else:
             self.vx_des = 0
         if self.ballistic:
@@ -244,6 +262,8 @@ class Hero(PlatformObject):
         dx, dy = math.sin(self.aim_angle), -math.cos(self.aim_angle)
         d = (random.random() - .5) * 2 * SHOT_JITTER
         self.frame.projectiles.append(Projectile(self.frame, x + dx * d, y + dy * d, angle))
+        i = random.randint(1, 4)
+        SoundManager.load(f"assets/audio/gunshot_{i}.ogg").play()
 
     def get_zombie(self, max_dist=1000):
         """ Get the closest zombie within line-of-sight, prioritizing previous target """

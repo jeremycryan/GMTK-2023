@@ -8,6 +8,7 @@ from constants import *
 
 from image_manager import ImageManager
 from pyracy.sprite_tools import Sprite, Animation
+from sound_manager import SoundManager
 
 
 class Zombie(PlatformObject):
@@ -66,12 +67,21 @@ class Zombie(PlatformObject):
             loop=True,
         )
         self.sprite.chain_animation("land_left", "idle_left")
-        self.sprite.chain_animation("land_right","idle_right")
+        self.sprite.chain_animation("land_right", "idle_right")
         self.sprite.add_callback("hit_right", self.on_hit)
         self.sprite.add_callback("hit_left", self.on_hit)
         self.sprite.add_callback("land_left", self.on_land, [True])
         self.sprite.add_callback("land_right", self.on_land, [False])
         self.sprite.start_animation("idle_left")
+        SoundManager.load(f"assets/audio/ZR_hurt_1.ogg")
+        SoundManager.load(f"assets/audio/ZR_hurt_2.ogg")
+        SoundManager.load(f"assets/audio/ZR_hurt_3.ogg")
+        SoundManager.load(f"assets/audio/ZR_hurt_4.ogg")
+        SoundManager.load(f"assets/audio/ZR_landing_thud_1.ogg")
+        SoundManager.load(f"assets/audio/ZR_landing_thud_2.ogg")
+        for i in range(7):
+            SoundManager.load(f"assets/audio/ZR_launch_{i+1}.ogg")
+
 
         self.agape = False
 
@@ -164,6 +174,8 @@ class Zombie(PlatformObject):
                 self.sprite.start_animation("fling_left")
             else:
                 self.sprite.start_animation("fling_right")
+            i = random.randint(1, 7)
+            SoundManager.load(f"assets/audio/ZR_launch_{i}.ogg").play()
         else:
             self.sprite.start_animation("falling_left")
         self.state = Zombie.BALLISTIC
@@ -177,6 +189,8 @@ class Zombie(PlatformObject):
         self.sprite.start_animation(f"land_{direction}")
         self.state = Zombie.LANDING
         self.frame.shake(3)
+        i = random.randint(1, 3)
+        SoundManager.load(f"assets/audio/ZR_landing_thud_{i}.ogg").play()
 
     def on_land(self, left=True):
         if left:
@@ -196,6 +210,8 @@ class Zombie(PlatformObject):
         self.hp -= damage
         self.frame.shake(15)
         self.frame.freeze(0.25)
+        i = random.randint(1, 4)
+        SoundManager.load(f"assets/audio/ZR_hurt_{i}.ogg").play()
 
     def on_collision(self, tile_type, tile_rect):
         dx, dy = self.get_tile_range()
