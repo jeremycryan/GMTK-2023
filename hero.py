@@ -289,6 +289,8 @@ class Hero(PlatformObject):
         return None, None
 
     def hit(self, damage):
+        sound = SoundManager.load(f"assets/audio/man_damage_{random.choice((1, 2, 3))}.ogg")
+        sound.play()
         self.hp -= damage
         if self.hp < 0:
             self.hp = 0

@@ -161,6 +161,9 @@ class Frame(FrameBase):
                 self.shake(20)
                 self.level += 1
                 if True:#self.level <= MAX_LEVEL:
+                    sound = SoundManager.load("assets/audio/level_clear.ogg")
+                    sound.set_volume(0.3)
+                    sound.play()
                     self.level_end = True
                 else:
                     self.victory = True
