@@ -30,6 +30,7 @@ class Hero(PlatformObject):
         self.location = None
         self.destination = None
         self.retarget_timer = 0
+        self.flip_timer = 0
 
         self.sprite = Sprite(12)
         idle = Animation(ImageManager.load("assets/images/man run temp 6fps.png", 0.5), (4, 1), 4)
@@ -107,7 +108,11 @@ class Hero(PlatformObject):
             self.aim_time = HERO_AIM_TIME
         # Face towards target
         if math.cos(self.aim_angle) * math.cos(self.target_angle) < 0:
-            self.aim_angle = math.pi - self.aim_angle
+            self.flip_timer += dt
+            if self.flip_timer > 0.3:
+                self.aim_angle = math.pi - self.aim_angle
+        else:
+            self.flip_timer = 0
         # Adjust aim towards target
         da = dt * SWIVEL_SPEED
         a1 = self.aim_angle + da
