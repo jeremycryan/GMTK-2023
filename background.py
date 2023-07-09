@@ -5,7 +5,7 @@ import constants as c
 class Background:
 
     def __init__(self):
-        self.surf = ImageManager.load("assets/images/temp bg.png", 1)
+        self.surf = ImageManager.load("assets/images/NEW BG 2.png", 1)
 
     def update(self, dt, events):
         pass

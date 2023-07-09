@@ -3,6 +3,7 @@ import random
 import pygame.draw
 
 from constants import *
+from image_manager import ImageManager
 from particle import Spatter
 from sound_manager import SoundManager
 
@@ -25,6 +26,8 @@ class Projectile:
         SoundManager.load(f"assets/audio/terrain_shot_impact_4.ogg")
         for i in range(13):
             SoundManager.load(f"assets/audio/ZR_shot_impact_{i+1}.ogg")
+
+        self.sprite = ImageManager.load("assets/images/one_bullet.png")
 
     def update(self, dt, events):
         if self.hit:
@@ -66,9 +69,16 @@ class Projectile:
 
     def draw(self, surface, offset):
         if self.hit:
-            pygame.draw.circle(surface, (255, 100, 0), (self.x + offset[0], self.y + offset[1]), self.r * 2)
+            pygame.draw.circle(surface, (255, 255, 180), (self.x + offset[0], self.y + offset[1]), self.r * 2)
         else:
-            pygame.draw.circle(surface, (50, 50, 50), (self.x + offset[0], self.y + offset[1]), self.r)
+            surf = self.sprite
+            angle = math.atan2(-self.vy, self.vx) + math.pi
+            angle = math.degrees(angle)
+            surf = pygame.transform.rotate(surf, angle)
+            x = self.x - surf.get_width()//2 + offset[0]
+            y = self.y - surf.get_height()//2 + offset[1]
+            surface.blit(surf, (x, y))
+            #pygame.draw.circle(surface, (50, 50, 50), (self.x + offset[0], self.y + offset[1]), self.r)
 
     def collide(self, rect):
         """ Return true if collision occurs, else False """
