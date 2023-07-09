@@ -51,6 +51,7 @@ class Frame(FrameBase):
         self.upgrade_ui = UpgradeUI(self)
         self.background = Background()
         self.t = 0
+        self.zombie_sound_timer = 0
         self.spawn_count = 0
         self.spawn_queue = []
         self.load_zombies()
@@ -67,6 +68,8 @@ class Frame(FrameBase):
         self.stage_clear_caption_text = self.stage_clear_caption_font.render("The hero has overcome your attacks, for now...", True, (255, 255, 255))
         self.victory_text = self.stage_clear_font.render("Victory!", True, (255, 255, 255))
         self.particles = []
+        for i in range(5):
+            SoundManager.load(f"assets/audio/ZR_idle_{i+1}.ogg")
         self.shade = pygame.Surface(WINDOW_SIZE)
         self.shade.fill((0, 0, 0))
         self.midbar = pygame.Surface((WINDOW_WIDTH, 200))
@@ -118,7 +121,11 @@ class Frame(FrameBase):
                         self.game.upgrade_levels = {key: 0 for key in UPGRADE_NAMES}
                 if event.key == pygame.K_s:
                     self.shake(15)
-
+        self.zombie_sound_timer += math.sqrt(max(4, len(self.zombies)) * dt/1000)
+        if self.zombie_sound_timer > 1 + random.random() * 1:
+            i = random.randint(1, 5)
+            SoundManager.load(f"assets/audio/ZR_idle_{i}.ogg").play()
+            self.zombie_sound_timer = 0
         if self.level_end or self.victory:
             self.level_end_timer += dt
             if not self.victory and self.level_end_timer > 2:

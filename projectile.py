@@ -1,9 +1,10 @@
 import math
-
+import random
 import pygame.draw
 
 from constants import *
 from particle import Spatter
+from sound_manager import SoundManager
 
 
 class Projectile:
@@ -18,6 +19,12 @@ class Projectile:
         self.zombies_hit = set()
         self.hit = False
         self.explode_time = 0.05
+        SoundManager.load(f"assets/audio/terrain_shot_impact_1.ogg")
+        SoundManager.load(f"assets/audio/terrain_shot_impact_2.ogg")
+        SoundManager.load(f"assets/audio/terrain_shot_impact_3.ogg")
+        SoundManager.load(f"assets/audio/terrain_shot_impact_4.ogg")
+        for i in range(13):
+            SoundManager.load(f"assets/audio/ZR_shot_impact_{i+1}.ogg")
 
     def update(self, dt, events):
         if self.hit:
@@ -34,6 +41,9 @@ class Projectile:
             d = self.collide(tile)
             if d:
                 self.hit = True
+                i = random.randint(1, 4)
+                SoundManager.load(f"assets/audio/terrain_shot_impact_{i}.ogg").play()
+                break
         # Check for zombie collision
         for zombie in self.frame.zombies:
             if zombie in self.zombies_hit:
@@ -49,6 +59,8 @@ class Projectile:
                 self.zombies_hit.add(zombie)
                 if len(self.zombies_hit) >= self.frame.game.upgrade_levels[PIERCE] + 1:
                     self.hit = True
+                i = random.randint(1, 13)
+                SoundManager.load(f"assets/audio/ZR_shot_impact_{i}.ogg").play()
                 break
 
     def draw(self, surface, offset):
