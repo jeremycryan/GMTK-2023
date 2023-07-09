@@ -49,6 +49,11 @@ class Frame(FrameBase):
         self.spawn_queue = []
         self.load_zombies()
         self.complete = False
+        self.victory = False
+        self.level_end = False
+        self.stage_clear_font = pygame.font.Font("assets/fonts/edge_of_the_galaxy.otf", 70)
+        self.stage_clear_text = self.stage_clear_font.render("Stage Cleared!", True, (255, 255, 255))
+        self.victory_text = self.stage_clear_font.render("Victory!", True, (255, 255, 255))
 
     def load_zombies(self):
         if self.level == 1:
@@ -61,24 +66,33 @@ class Frame(FrameBase):
                 self.spawn_queue.append(Zombie(self, *spawner))
 
     def update(self, dt, events):
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    self.zombies = []
+                    self.spawn_queue = []
+                if self.level_end or self.victory and event.key == pygame.K_RETURN:
+                    self.done = True
+                    if self.victory:
+                        self.level = 1
+
+        if self.level_end or self.victory:
+            return
         self.upgrade_ui.update(dt, events)
         self.toss_ui.update(dt, events)
         dt = self.toss_ui.adjust_time(dt)
         self.t += dt
+
         if self.t > self.spawn_count * SPAWN_RATE:
             if self.spawn_count < len(self.spawn_queue):
                 self.zombies.append(self.spawn_queue[self.spawn_count])
                 self.spawn_count += 1
             elif not len(self.zombies):
-                self.done = True
                 self.level += 1
-                # TODO: game over ("Level Complete") screen
-                return
-
-        for event in events:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_p:
-                self.level += 1
-                self.done = True
+                if self.level <= MAX_LEVEL:
+                    self.level_end = True
+                else:
+                    self.victory = True
 
         self.grid.update(dt, events)
         for hero in self.heros:
@@ -98,7 +112,7 @@ class Frame(FrameBase):
             self.complete = True
 
     def draw(self, surface, offset=(0, 0)):
-        #surface.fill((100, 0, 0))
+        # surface.fill((100, 0, 0))
         self.background.draw(surface, offset)
         # self.grid.draw(surface, offset, only=[Tile.AIR])
         if self.level == 1:
@@ -112,6 +126,10 @@ class Frame(FrameBase):
         self.grid.draw(surface, offset, only=[Tile.GROUND])
         self.toss_ui.draw(surface, offset)
         self.upgrade_ui.draw(surface, offset)
+        if self.victory:
+            surface.blit(self.victory_text, (WINDOW_WIDTH / 2 - self.victory_text.get_width() / 2, WINDOW_HEIGHT / 2))
+        if self.level_end:
+            surface.blit(self.stage_clear_text, (WINDOW_WIDTH/2 - self.stage_clear_text.get_width()/2, WINDOW_HEIGHT/2))
 
     def next_frame(self):
         return Frame(self.game, self.level)

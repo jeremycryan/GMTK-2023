@@ -67,10 +67,7 @@ class Hero(PlatformObject):
         self.arm_sprite.start_animation("aiming_left")
 
     def facing_left(self):
-        if self.target:
-            return (math.pi / 2) < self.aim_angle % (2 * math.pi) < (3 * math.pi / 2)
-        else:
-            return self.vx <= 0
+        return (math.pi / 2) < self.aim_angle % (2 * math.pi) < (3 * math.pi / 2)
 
     def update(self, dt, events):
         super().update(dt, events)
@@ -96,10 +93,10 @@ class Hero(PlatformObject):
         self.retarget_timer -= dt
         if self.retarget_timer <= 0:
             self.target, self.target_angle = self.get_zombie()
-            self.retarget_timer = 0.3
+            self.retarget_timer = 0.05
         # Default to swivel aim if no target found
         if not self.target:
-            self.target_angle = math.pi if self.facing_left() else 0
+            self.target_angle = math.pi if self.vx_des < 0 else 0
             # if math.cos(self.aim_angle) > 0:
             #     self.target_angle = math.sin(self.t * 2) * 0.1
             # else:
@@ -107,11 +104,12 @@ class Hero(PlatformObject):
             self.cooldown = 0
             self.aim_time = HERO_AIM_TIME
         # Face towards target
+        self.flip_timer += dt
         if math.cos(self.aim_angle) * math.cos(self.target_angle) < 0:
-            self.flip_timer += dt
             if self.flip_timer > 0.3:
                 self.aim_angle = math.pi - self.aim_angle
-        else:
+                self.flip_timer = 0
+        elif self.target:
             self.flip_timer = 0
         # Adjust aim towards target
         da = dt * SWIVEL_SPEED
@@ -263,10 +261,14 @@ class Hero(PlatformObject):
             return
         x, y = self.frame.grid.world_to_tile((self.x, self.y + self.h / 2 + 1))
         x, y = math.floor(x), math.floor(y)
+        if self.location and self.destination:
+            last_dx = self.destination[0] - self.location[0]
+        else:
+            last_dx = -1
         # Left previous tile; choose a new goal
         if (x, y) != self.location or self.destination is None:
             self.location = (x, y)
-            dx = 1 if (random.random() > 0.5) else -1
+            dx = last_dx if (random.random() > 0.3) else -last_dx
             for dy in range(-2, 3):
                 tile0 = self.frame.grid.get_tile_at_tile((x + dx, y + dy))
                 tile1 = self.frame.grid.get_tile_at_tile((x + dx, y + dy - 1))

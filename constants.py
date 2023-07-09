@@ -78,4 +78,4 @@ UPGRADE_DESCRIPTIONS = {
     LEFTY: "More dangerous with left hand;\nless dangerous with right.",
     WALK_SPEED: "The hero can move faster.",
 }
-
+MAX_LEVEL = 2
