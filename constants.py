@@ -4,7 +4,7 @@ WINDOW_SIZE = WINDOW_WIDTH, WINDOW_HEIGHT
 
 FPS = 120
 
-CAPTION = "Hello this is a game"
+CAPTION = "Gunther McShooty: Alien Hunter"
 
 TILE_WIDTH = 64
 TILE_HEIGHT = 64
