@@ -125,8 +125,11 @@ class Frame(FrameBase):
             if zombie.grabbed:
                 self.zombies.remove(zombie)
                 grabbed.append(zombie)
-            zombie.update(dt, events)
+            if zombie.hp <= 0:
+                self.toss_ui.release_zombie(launch=False)
         self.zombies += grabbed
+        for zombie in self.zombies:
+            zombie.update(dt, events)
         for projectile in self.projectiles[:]:
             projectile.update(dt, events)
         self.background.update(dt, events)
