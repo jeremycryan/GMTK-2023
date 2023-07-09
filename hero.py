@@ -18,10 +18,10 @@ class Hero(PlatformObject):
         super().__init__(frame, x, y, w, h)
         self.aim_angle = math.pi  # In radians!!!
         self.target_angle = self.aim_angle
-        self.base_cooldown = HERO_COOLDOWN * 0.75**self.frame.game.upgrade_levels[RATE_OF_FIRE]
+        self.base_cooldown = HERO_COOLDOWN * 0.75 ** self.frame.game.upgrade_levels[RATE_OF_FIRE]
         self.cooldown = self.base_cooldown
         self.aim_time = HERO_AIM_TIME
-        self.spread = SHOT_SPREAD * 0.5**self.frame.game.upgrade_levels[ACCURACY]
+        self.spread = SHOT_SPREAD * 0.5 ** self.frame.game.upgrade_levels[ACCURACY]
         self.clip = 10
         self.target = None
         self.t = 0
@@ -38,10 +38,10 @@ class Hero(PlatformObject):
         fall = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1)
         fall_right = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1, reverse_x=True)
         self.sprite.add_animation({
-            "jump_left":jump,
-            "jump_right":jump_right,
-            "fall_left":fall,
-            "fall_right":fall_right,
+            "jump_left": jump,
+            "jump_right": jump_right,
+            "fall_left": fall,
+            "fall_right": fall_right,
         })
         self.sprite.add_animation({
             "idle_left": idle,
@@ -51,9 +51,11 @@ class Hero(PlatformObject):
 
         self.arm_sprite = Sprite(12)
         aiming = Animation(ImageManager.load("assets/images/man arm aim temp.png", 0.5), (1, 1), 1)
-        aiming_right = Animation(ImageManager.load("assets/images/man arm aim temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        aiming_right = Animation(ImageManager.load("assets/images/man arm aim temp.png", 0.5), (1, 1), 1,
+                                 reverse_x=True)
         standby = Animation(ImageManager.load("assets/images/man arm standby temp.png", 0.5), (1, 1), 1)
-        standby_right = Animation(ImageManager.load("assets/images/man arm standby temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        standby_right = Animation(ImageManager.load("assets/images/man arm standby temp.png", 0.5), (1, 1), 1,
+                                  reverse_x=True)
         self.arm_sprite.add_animation({
             "aiming_left": aiming,
             "aiming_right": aiming_right,
@@ -64,7 +66,7 @@ class Hero(PlatformObject):
 
     def facing_left(self):
         if self.target:
-            return (math.pi/2) < self.aim_angle%(2*math.pi) < (3*math.pi/2)
+            return (math.pi / 2) < self.aim_angle % (2 * math.pi) < (3 * math.pi / 2)
         else:
             return self.vx <= 0
 
@@ -80,7 +82,8 @@ class Hero(PlatformObject):
         # Update navigation
         self.navigate()
         if self.destination:
-            self.vx_des = math.copysign(HERO_SPEED + 40* self.frame.game.upgrade_levels[WALK_SPEED], self.destination[0] - self.location[0])
+            self.vx_des = math.copysign(HERO_SPEED + 40 * self.frame.game.upgrade_levels[WALK_SPEED],
+                                        self.destination[0] - self.location[0])
             if not self.ballistic and self.destination[1] < self.location[1]:
                 self.vy -= HERO_JUMP
         else:
@@ -100,17 +103,17 @@ class Hero(PlatformObject):
             self.aim_time = HERO_AIM_TIME
         # Face towards target
         if math.cos(self.aim_angle) * math.cos(self.target_angle) < 0:
-            self.aim_angle = math.pi-self.aim_angle
+            self.aim_angle = math.pi - self.aim_angle
         # Adjust aim towards target
         da = dt * SWIVEL_SPEED
         a1 = self.aim_angle + da
         a2 = self.aim_angle - da
-        if abs((a1 - self.target_angle + math.pi) % (2*math.pi) - math.pi) < \
-                abs((a2 - self.target_angle + math.pi) % (2*math.pi) - math.pi):
+        if abs((a1 - self.target_angle + math.pi) % (2 * math.pi) - math.pi) < \
+                abs((a2 - self.target_angle + math.pi) % (2 * math.pi) - math.pi):
             self.aim_angle = a1
         else:
             self.aim_angle = a2
-        if abs((self.aim_angle - self.target_angle + math.pi) % (2*math.pi) - math.pi) < da:
+        if abs((self.aim_angle - self.target_angle + math.pi) % (2 * math.pi) - math.pi) < da:
             self.aim_angle = self.target_angle
         # Shoot on a cooldown
         self.aim_time -= dt
@@ -146,7 +149,6 @@ class Hero(PlatformObject):
             else:
                 self.arm_sprite.start_animation("standby_right", restart_if_active=False)
 
-
     def muzzle(self):
         """ Location of end of gun """
         x, y = self.muzzle_center()
@@ -154,23 +156,24 @@ class Hero(PlatformObject):
         offset = 0.18
         if not self.facing_left():
             offset *= -1
-        x0 = x + muzzle_length*math.cos(self.aim_angle + offset)
-        y0 = y + muzzle_length*math.sin(self.aim_angle + offset)
+        x0 = x + muzzle_length * math.cos(self.aim_angle + offset)
+        y0 = y + muzzle_length * math.sin(self.aim_angle + offset)
         return x0, y0
 
     def muzzle_center(self):
         """ Location of gun center of rotation (should be in line with the barrel)"""
         x_factor = -1 if self.facing_left() else 1
-        return self.x + 30*x_factor, self.y + 10
+        return self.x + 30 * x_factor, self.y + 10
 
     def gun_center(self):
         muz = self.muzzle()
         muz_rot = self.muzzle_center()
         length_down = 0.5
-        return muz[0] * length_down + muz_rot[0] * (1-length_down), muz[1] * length_down + muz_rot[1] * (1 - length_down)
+        return muz[0] * length_down + muz_rot[0] * (1 - length_down), muz[1] * length_down + muz_rot[1] * (
+                    1 - length_down)
 
     def draw(self, surface, offset):
-        #pygame.draw.rect(surface, (255, 0, 0), self.get_rect(offset), 2)
+        # pygame.draw.rect(surface, (255, 0, 0), self.get_rect(offset), 2)
         x, y = self.raycast(self.muzzle(), self.aim_angle)
         if self.target:
             pygame.draw.line(surface, (255, 0, 0), (self.muzzle()), (x, y), 2)
@@ -183,14 +186,14 @@ class Hero(PlatformObject):
             arm_offset = (30, -5)
             arm_surf = pygame.transform.rotate(arm_surf, math.degrees(-self.aim_angle))
         angle = -self.aim_angle
-        arm_offset = math.cos(angle) * arm_offset[0] + math.sin(angle)*arm_offset[1], \
-                     math.cos(angle)*arm_offset[1] - math.sin(angle)*arm_offset[0]
+        arm_offset = math.cos(angle) * arm_offset[0] + math.sin(angle) * arm_offset[1], \
+                     math.cos(angle) * arm_offset[1] - math.sin(angle) * arm_offset[0]
 
         x, y = self.muzzle_center()
         x += arm_offset[0]
         y += arm_offset[1]
-        x -= arm_surf.get_width()//2
-        y -= arm_surf.get_height()//2
+        x -= arm_surf.get_width() // 2
+        y -= arm_surf.get_height() // 2
         surface.blit(arm_surf, (x, y))
 
         self.sprite.x = self.x
@@ -198,7 +201,7 @@ class Hero(PlatformObject):
         self.sprite.draw(surface, offset)
 
         spacing = 10
-        x = self.x + self.max_hp*spacing/2 - 20
+        x = self.x + self.max_hp * spacing / 2 - 20
         y = self.y - 75
         for i in list(range(self.max_hp))[::-1]:
             if self.hp > i:
@@ -208,12 +211,10 @@ class Hero(PlatformObject):
             surface.blit(surf, (x, y))
             x -= spacing
 
-
-
     def raycast(self, origin, angle, step=5, max_length=2000):
         """ Find first collision of ray with the tilemap """
         x, y = origin
-        for i in range(int(max_length/step)):
+        for i in range(int(max_length / step)):
             px, py = x + i * step * math.cos(angle), y + i * step * math.sin(angle)
             if self.frame.grid.tile_is_solid(self.frame.grid.get_tile_at((px, py))):
                 return px, py
@@ -230,20 +231,17 @@ class Hero(PlatformObject):
     def get_zombie(self, max_dist=1000):
         """ Get the closest zombie within line-of-sight, prioritizing previous target """
         x0, y0 = self.muzzle_center()
-        min_dist = max_dist
-        min_zombie = None
-        for zombie in self.frame.zombies:
-            true_dist = math.sqrt((zombie.x - x0) ** 2 + (zombie.y - y0) ** 2)
-            dist = true_dist * TARGET_PRIORITY if zombie is self.target else true_dist
-            # Check zombie is closer than any other zombies
-            if dist < min_dist:
-                x, y = self.raycast((x0, y0), math.atan2(zombie.y - y0, zombie.x - x0))
-                # Check line of sight to zombie
-                if math.sqrt((x - x0) ** 2 + (y - y0) ** 2) > true_dist:
-                    min_zombie = zombie
-                    min_dist = dist
-        angle = math.atan2(min_zombie.y - y0, min_zombie.x - x0) if min_zombie else None
-        return min_zombie, angle
+        zombies = self.frame.zombies[:]
+        zombies.sort(key=lambda z: math.sqrt((z.x - x0) ** 2 + (z.y - y0) ** 2) * (TARGET_PRIORITY if z is self.target
+                                                                                   else 1))
+        for zombie in zombies:
+            dist = math.sqrt((zombie.x - x0) ** 2 + (zombie.y - y0) ** 2)
+            # Check line of sight to zombie
+            x, y = self.raycast((x0, y0), math.atan2(zombie.y - y0, zombie.x - x0))
+            if math.sqrt((x - x0) ** 2 + (y - y0) ** 2) > dist:
+                angle = math.atan2(zombie.y - y0, zombie.x - x0)
+                return zombie, angle
+        return None, None
 
     def hit(self, damage):
         self.hp -= damage
@@ -254,7 +252,7 @@ class Hero(PlatformObject):
     def navigate(self):
         if self.ballistic:
             return
-        x, y = self.frame.grid.world_to_tile((self.x, self.y + self.h/2 + 1))
+        x, y = self.frame.grid.world_to_tile((self.x, self.y + self.h / 2 + 1))
         x, y = math.floor(x), math.floor(y)
         # Left previous tile; choose a new goal
         if (x, y) != self.location or self.destination is None:
@@ -275,4 +273,4 @@ class Hero(PlatformObject):
 
     def get_tile_range(self):
         """ Minimum x and y distance of tiles to check for possible collisions """
-        return self.w/2, self.h/2
+        return self.w / 2, self.h / 2
