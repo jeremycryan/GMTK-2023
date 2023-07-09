@@ -17,7 +17,7 @@ class Zombie(PlatformObject):
     GRABBED = 3
     LANDING = 4
 
-    def __init__(self, frame, x, y, w=52, h=52, scale_by=0.5):
+    def __init__(self, frame, x, y, w=52, h=52, scale_by=0.5, name="ZR"):
         super().__init__(frame, x, y, w, h, r=w/2)
 
         self.sprite = Sprite(12)
@@ -29,17 +29,18 @@ class Zombie(PlatformObject):
         self.damage = 1
         self.dead = False
         self.speed = ZOMBIE_SPEED
+        self.launch_speed = 1
 
-        fling = Animation(ImageManager.load("assets/images/ZR Throw 12fps.png", scale_by=scale_by), (4, 1), 4)
-        fling_right = Animation(ImageManager.load("assets/images/ZR Throw 12fps.png", scale_by=scale_by), (4, 1), 4, reverse_x=True)
-        idle = Animation(ImageManager.load("assets/images/ZR Walk 6fps.png", scale_by=scale_by), (6, 1), 6, time_scaling = .8)
-        idle_right = Animation(ImageManager.load("assets/images/ZR Walk 6fps.png", scale_by=scale_by), (6, 1), 6, reverse_x=True, time_scaling = .8)
-        hold = Animation(ImageManager.load("assets/images/ZR held 12fps.png", scale_by=scale_by), (5, 1), 5)
-        hold_right = Animation(ImageManager.load("assets/images/ZR held 12fps.png", scale_by=scale_by), (5, 1), 5, reverse_x=True)
-        falling = Animation(ImageManager.load("assets/images/ZR Fall 6fps.png", scale_by=scale_by), (2, 1), 2)
-        falling_right = Animation(ImageManager.load("assets/images/ZR Fall 6fps.png", scale_by=scale_by), (2, 1), 2, reverse_x=True)
-        land = Animation(ImageManager.load("assets/images/ZR Land Temp.png", scale_by=scale_by), (1, 1), 1)
-        land_right = Animation(ImageManager.load("assets/images/ZR Land Temp.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
+        fling = Animation(ImageManager.load(f"assets/images/{name} Throw 12fps.png", scale_by=scale_by), (4, 1), 4)
+        fling_right = Animation(ImageManager.load(f"assets/images/{name} Throw 12fps.png", scale_by=scale_by), (4, 1), 4, reverse_x=True)
+        idle = Animation(ImageManager.load(f"assets/images/{name} Walk 6fps.png", scale_by=scale_by), (6, 1), 6, time_scaling = .8)
+        idle_right = Animation(ImageManager.load(f"assets/images/{name} Walk 6fps.png", scale_by=scale_by), (6, 1), 6, reverse_x=True, time_scaling = .8)
+        hold = Animation(ImageManager.load(f"assets/images/{name} held 12fps.png", scale_by=scale_by), (5, 1), 5)
+        hold_right = Animation(ImageManager.load(f"assets/images/{name} held 12fps.png", scale_by=scale_by), (5, 1), 5, reverse_x=True)
+        falling = Animation(ImageManager.load(f"assets/images/{name} Fall 6fps.png", scale_by=scale_by), (2, 1), 2)
+        falling_right = Animation(ImageManager.load(f"assets/images/{name} Fall 6fps.png", scale_by=scale_by), (2, 1), 2, reverse_x=True)
+        land = Animation(ImageManager.load(f"assets/images/{name} Land 0fps.png", scale_by=scale_by), (1, 1), 1)
+        land_right = Animation(ImageManager.load(f"assets/images/{name} Land 0fps.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
         self.sprite.add_animation(
             {
                 "fling_left": fling,
@@ -182,6 +183,7 @@ class Zombie(PlatformObject):
             if self.collide(hero.get_rect()):
                 # TODO: attack animation
                 hero.hit(self.damage)
+                self.hit(1000)
                 hero.vx += math.copysign(ZOMBIE_KNOCKBACK, self.vx_des)
                 self.vx += math.copysign(ZOMBIE_KNOCKBACK, self.x - hero.x)
                 self.cooldown = ZOMBIE_COOLDOWN
@@ -190,6 +192,36 @@ class Zombie(PlatformObject):
 
 class BigZombie(Zombie):
     def __init__(self, frame, x, y):
-        s = 1.4
+        s = 1.6
         super().__init__(frame, x, y, w=int(52 * s), h=int(52 * s), scale_by=s/2)
-        self.hp = 5
+        self.hp = 1
+        self.damage = 3
+
+    def hit(self, damage):
+        self.hp -= damage
+        if self.hp <= 0:
+            z1 = Zombie(self.frame, self.x+5, self.y)
+            z2 = Zombie(self.frame, self.x-5, self.y)
+            z3 = Zombie(self.frame, self.x, self.y-5)
+            z1.vx += 100
+            z2.vx -= 100
+            z3.vy -= 100
+            z1.vx_des = z1.speed
+            z2.vx_des = -z2.speed
+            z3.vx_des = self.vx_des
+            self.frame.zombies.append(z1)
+            self.frame.zombies.append(z2)
+            self.frame.zombies.append(z3)
+
+
+class FastZombie(Zombie):
+    def __init__(self, frame, x, y):
+        super().__init__(frame, x, y, name="ZRHyper")
+        self.speed *= 10
+
+
+class ToughZombie(Zombie):
+    def __init__(self, frame, x, y):
+        s = 1
+        super().__init__(frame, x, y, w=int(52 * s), h=int(52 * s), scale_by=s/2, name="ZRTough")
+        self.hp = 4

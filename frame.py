@@ -9,7 +9,7 @@ from hero import Hero
 from image_manager import ImageManager
 from toss_ui import TossUI
 from upgrade_ui import UpgradeUI
-from zombie import Zombie, BigZombie
+from zombie import *
 
 
 class FrameBase:
@@ -59,8 +59,12 @@ class Frame(FrameBase):
     def load_zombies(self):
         self.spawner_count = 0
         if self.level == 1:
-            for i in range(4):
-                self.spawn_queue.append(Zombie(self, *self.get_spawner()))
+            self.spawn_queue.append(Zombie(self, *self.get_spawner()))
+            self.spawn_queue.append(FastZombie(self, *self.get_spawner()))
+            self.spawn_queue.append(ToughZombie(self, *self.get_spawner()))
+            self.spawn_queue.append(BigZombie(self, *self.get_spawner()))
+            # for i in range(4):
+            #     self.spawn_queue.append(Zombie(self, *self.get_spawner()))
         elif self.level == 2:
             for i in range(2):
                 self.spawn_queue.append(Zombie(self, *self.get_spawner()))
@@ -97,7 +101,7 @@ class Frame(FrameBase):
             if self.spawn_count < len(self.spawn_queue):
                 self.zombies.append(self.spawn_queue[self.spawn_count])
                 self.spawn_count += 1
-            elif not len(self.zombies):
+            elif not len(self.zombies) and len(self.heros):
                 self.level += 1
                 if self.level <= MAX_LEVEL:
                     self.level_end = True

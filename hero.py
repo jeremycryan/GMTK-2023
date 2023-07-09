@@ -88,7 +88,7 @@ class Hero(PlatformObject):
         else:
             self.vx_des = 0
         if self.ballistic:
-            self.vx = self.vx_des
+            self.vx = min(self.vx_des, HERO_SPEED)
         # Select target
         self.retarget_timer -= dt
         if self.retarget_timer <= 0:
