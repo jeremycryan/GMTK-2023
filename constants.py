@@ -23,7 +23,7 @@ FRICTION = 10                   # grounded friction time constant in 1/s
 V_MIN_SLIDE = 5                 # minimum sliding velocity in pixels/s
 
 # Zombie parameters
-ZOMBIE_SPEED = 20               # zombie walking speed in pixels/s
+ZOMBIE_SPEED = 15               # zombie walking speed in pixels/s
 ZOMBIE_KNOCKBACK = 50           # zombie attack impulse on hero in pixels/s
 ZOMBIE_COOLDOWN = 0.5           # time between attacks in s
 
@@ -60,16 +60,19 @@ DOWN_RIGHT = (1, 0)
 HEALTH = 0
 RATE_OF_FIRE = 1
 ACCURACY = 2
+LEFTY = 3
 
 UPGRADE_NAMES = {
     HEALTH: "Thick skin",
     RATE_OF_FIRE: "Trigger lubricant",
     ACCURACY: "Contact lenses",
+    LEFTY: "Lefty",
 }
 
 UPGRADE_DESCRIPTIONS = {
     HEALTH: "The hero's health is increased.",
     RATE_OF_FIRE: "The hero shoots more rapidly.",
-    ACCURACY: "Reduces the hero's attack spread."
+    ACCURACY: "Reduces the hero's attack spread.",
+    LEFTY: "More dangerous with left hand;\nless dangerous with right."
 }
 

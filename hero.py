@@ -18,7 +18,8 @@ class Hero(PlatformObject):
         super().__init__(frame, x, y, w, h)
         self.aim_angle = math.pi  # In radians!!!
         self.target_angle = self.aim_angle
-        self.cooldown = HERO_COOLDOWN * 0.75**self.frame.game.upgrade_levels[RATE_OF_FIRE]
+        self.base_cooldown = HERO_COOLDOWN * 0.75**self.frame.game.upgrade_levels[RATE_OF_FIRE]
+        self.cooldown = self.base_cooldown
         self.aim_time = HERO_AIM_TIME
         self.spread = SHOT_SPREAD * 0.5**self.frame.game.upgrade_levels[ACCURACY]
         self.clip = 10
@@ -109,7 +110,7 @@ class Hero(PlatformObject):
         if self.aim_time <= 0:
             self.cooldown -= dt
             if self.cooldown <= 0 and self.target:
-                self.cooldown = HERO_COOLDOWN
+                self.cooldown = self.base_cooldown
                 self.shoot()
 
         if not self.ballistic:

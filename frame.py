@@ -47,6 +47,7 @@ class Frame(FrameBase):
         self.spawn_count = 0
         self.spawn_queue = []
         self.load_zombies()
+        self.complete = False
 
     def load_zombies(self):
         if self.level == 1:
@@ -59,8 +60,8 @@ class Frame(FrameBase):
                 self.spawn_queue.append(Zombie(self, *spawner))
 
     def update(self, dt, events):
-        self.toss_ui.update(dt, events)
         self.upgrade_ui.update(dt, events)
+        self.toss_ui.update(dt, events)
         dt = self.toss_ui.adjust_time(dt)
         self.t += dt
         if self.t > self.spawn_count * SPAWN_RATE:
@@ -91,9 +92,9 @@ class Frame(FrameBase):
         for projectile in self.projectiles[:]:
             projectile.update(dt, events)
         self.background.update(dt, events)
-        if not len(self.heros):
-            # TODO: level up ("Game Over...try again?") screen
-            self.done = True
+        if not len(self.heros) and not self.complete:
+            self.upgrade_ui.raise_up()
+            self.complete = True
 
     def draw(self, surface, offset=(0, 0)):
         #surface.fill((100, 0, 0))

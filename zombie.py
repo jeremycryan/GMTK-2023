@@ -75,6 +75,8 @@ class Zombie(PlatformObject):
     def update(self, dt, events):
         """ Walk around randomly once zombie is grounded """
         super().update(dt, events)
+        if not self.dead and self.hp <= 0:
+            self.die()
         if self.dead:
             self.grabbed = False
             self.death_time -= dt
