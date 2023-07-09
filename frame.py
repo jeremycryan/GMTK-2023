@@ -79,20 +79,31 @@ class Frame(FrameBase):
     def load_zombies(self):
         self.spawner_count = 0
         if self.level == 1:
-            self.spawn_queue.append(Zombie(self, *self.get_spawner()))
-            self.spawn_queue.append(FastZombie(self, *self.get_spawner()))
-            self.spawn_queue.append(ToughZombie(self, *self.get_spawner()))
-            self.spawn_queue.append(BigZombie(self, *self.get_spawner()))
-            # for i in range(4):
-            #     self.spawn_queue.append(Zombie(self, *self.get_spawner()))
-        elif self.level == 2:
-            for i in range(2):
+            for i in range(4):
                 self.spawn_queue.append(Zombie(self, *self.get_spawner()))
-            for i in range(2):
-                self.spawn_queue.append(BigZombie(self, *self.get_spawner()))
+        elif self.level == 2:
+            for i in range(3):
+                self.spawn_queue.append(Zombie(self, *self.get_spawner()))
+                self.spawn_queue.append(FastZombie(self, *self.get_spawner()))
         elif self.level == 3:
+            for i in range(4):
+                self.spawn_queue.append(Zombie(self, *self.get_spawner()))
+            for i in range(4):
+                self.spawn_queue.append(ToughZombie(self, *self.get_spawner()))
+        elif self.level == 4:
             for i in range(5):
                 self.spawn_queue.append(Zombie(self, *self.get_spawner()))
+            for i in range(1):
+                self.spawn_queue.append(BigZombie(self, *self.get_spawner()))
+        elif self.level == 5:
+            for i in range(2):
+                self.spawn_queue.append(Zombie(self, *self.get_spawner()))
+            for i in range(2):
+                self.spawn_queue.append(FastZombie(self, *self.get_spawner()))
+            for i in range(2):
+                self.spawn_queue.append(ToughZombie(self, *self.get_spawner()))
+            for i in range(2):
+                self.spawn_queue.append(BigZombie(self, *self.get_spawner()))
 
     def get_spawner(self):
         self.spawner_count += 1
