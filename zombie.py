@@ -30,7 +30,7 @@ class Zombie(PlatformObject):
         self.dead = False
         self.speed = ZOMBIE_SPEED
         self.launch_speed = 1
-        self.damaged = None
+        self.paused = None
 
         fling = Animation(ImageManager.load(f"assets/images/{name} Throw 12fps.png", scale_by=scale_by), (4, 1), 4)
         fling_right = Animation(ImageManager.load(f"assets/images/{name} Throw 12fps.png", scale_by=scale_by), (4, 1), 4, reverse_x=True)
@@ -44,6 +44,8 @@ class Zombie(PlatformObject):
         land_right = Animation(ImageManager.load(f"assets/images/{name} Land 0fps.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
         hit = Animation(ImageManager.load(f"assets/images/{name} Hit 6fps.png", scale_by=scale_by), (2, 1), 2)
         hit_right = Animation(ImageManager.load(f"assets/images/{name} Hit 6fps.png", scale_by=scale_by), (2, 1), 2, reverse_x=True)
+        bite = Animation(ImageManager.load(f"assets/images/{name} Bite 12fps.png", scale_by=scale_by), (3, 1), 3)
+        bite_right = Animation(ImageManager.load(f"assets/images/{name} Bite 12fps.png", scale_by=scale_by), (3, 1), 3, reverse_x=True)
         self.sprite.add_animation(
             {
                 "fling_left": fling,
@@ -58,6 +60,8 @@ class Zombie(PlatformObject):
                 "land_right": land_right,
                 "hit_left": hit,
                 "hit_right": hit_right,
+                "bite_left": bite,
+                "bite_right": bite_right,
             },
             loop=True,
         )
@@ -77,8 +81,8 @@ class Zombie(PlatformObject):
         self.squash = 1.0
 
     def on_hit(self):
-        self.sprite.start_animation(self.damaged)
-        self.damaged = None
+        self.sprite.start_animation(self.paused)
+        self.paused = None
 
     def die(self):
         self.grabbed = False
@@ -108,11 +112,11 @@ class Zombie(PlatformObject):
         if not self.ballistic and not self.grabbed and not self.state == Zombie.LANDING:
             if self.vx_des > 0:
                 self.vx_des = self.speed
-                if not self.damaged:
+                if not self.paused:
                     self.sprite.start_animation("idle_right", restart_if_active=False)
             elif self.vx_des < 0:
                 self.vx_des = -self.speed
-                if not self.damaged:
+                if not self.paused:
                     self.sprite.start_animation("idle_left", restart_if_active=False)
             else:
                 self.vx_des = self.speed if random.random() > 0.5 else -self.speed
@@ -138,7 +142,7 @@ class Zombie(PlatformObject):
                 my_surf = pygame.transform.rotate(my_surf, math.degrees(angle))
             else:
                 self.agape = False
-                if not self.damaged:
+                if not self.paused:
                     self.sprite.start_animation(f"falling_{direction}", restart_if_active=False)
                 self.squash = max(1/(1 + abs(self.vy)*0.0005), 0.7)
 
@@ -182,11 +186,12 @@ class Zombie(PlatformObject):
         self.state = Zombie.IDLE
 
     def hit(self, damage):
-        self.damaged = self.sprite.active_animation_key
-        if self.vx > 0:
-            self.sprite.start_animation("hit_right")
-        else:
-            self.sprite.start_animation("hit_left")
+        if not self.paused:
+            self.paused = self.sprite.active_animation_key
+            if self.vx > 0:
+                self.sprite.start_animation("hit_right")
+            else:
+                self.sprite.start_animation("hit_left")
         self.hp -= damage
         self.frame.shake(15)
         self.frame.freeze(0.25)
@@ -202,11 +207,11 @@ class Zombie(PlatformObject):
     def attack(self):
         for hero in self.frame.heros:
             if self.collide(hero.get_rect()):
-                self.damaged = self.sprite.active_animation_key
+                self.paused = self.sprite.active_animation_key
                 if hero.x > self.x:
-                    self.sprite.start_animation("hit_right")
+                    self.sprite.start_animation("bite_right")
                 else:
-                    self.sprite.start_animation("hit_left")
+                    self.sprite.start_animation("bite_left")
                 hero.hit(self.damage)
                 self.hit(1000)
                 hero.vx += math.copysign(ZOMBIE_KNOCKBACK, self.vx_des)
