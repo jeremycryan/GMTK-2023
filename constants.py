@@ -29,7 +29,7 @@ ZOMBIE_COOLDOWN = 0.5           # time between attacks in s
 
 # Hero parameters
 RECOIL = 10                     # gun knockback in pixels/s
-HERO_COOLDOWN = 0.1             # time between shots in s
+HERO_COOLDOWN = 0.5             # time between shots in s
 HERO_AIM_TIME = 1               # time to hold aim steady before shooting
 TARGET_PRIORITY = 0.7           # amount to prioritize switching to a closer target (0 to 1)
 SWIVEL_SPEED = 1.3                # gun aiming speed in rad/s

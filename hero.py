@@ -31,9 +31,17 @@ class Hero(PlatformObject):
         self.sprite = Sprite(12)
         idle = Animation(ImageManager.load("assets/images/man idle revamp temp.png", 0.5), (1, 1), 1)
         idle_right = Animation(ImageManager.load("assets/images/man idle revamp temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        jump = Animation(ImageManager.load("assets/images/Man Jump temp.png", 0.5), (1, 1), 1)
+        jump_right = Animation(ImageManager.load("assets/images/Man Jump temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        fall = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1)
+        fall_right = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1, reverse_x=True)
         self.sprite.add_animation({
             "idle_left":idle,
             "idle_right":idle_right,
+            "jump_left":jump,
+            "jump_right":jump_right,
+            "fall_left":fall,
+            "fall_right":fall_right,
         })
         self.sprite.start_animation("idle_left")
 
@@ -104,12 +112,23 @@ class Hero(PlatformObject):
                 self.cooldown = HERO_COOLDOWN
                 self.shoot()
 
-        if self.facing_left():
-            self.sprite.start_animation("idle_left", restart_if_active=False)
-            self.arm_sprite.start_animation("aiming_left", restart_if_active=False)
+        if not self.ballistic:
+            if self.facing_left():
+                self.sprite.start_animation("idle_left", restart_if_active=False)
+                self.arm_sprite.start_animation("aiming_left", restart_if_active=False)
+            else:
+                self.sprite.start_animation("idle_right", restart_if_active=False)
+                self.arm_sprite.start_animation("aiming_right", restart_if_active=False)
         else:
-            self.sprite.start_animation("idle_right", restart_if_active=False)
-            self.arm_sprite.start_animation("aiming_right", restart_if_active=False)
+            if self.facing_left() and self.vy < 0:
+                self.sprite.start_animation("jump_left", restart_if_active=False)
+            elif self.facing_left():
+                self.sprite.start_animation("fall_left", restart_if_active=False)
+            elif self.vy < 0:
+                self.sprite.start_animation("jump_right", restart_if_active=False)
+            else:
+                self.sprite.start_animation("fall_right", restart_if_active=False)
+
 
     def muzzle(self):
         """ Location of end of gun """
@@ -118,8 +137,8 @@ class Hero(PlatformObject):
         offset = 0.18
         if not self.facing_left():
             offset *= -1
-        x0 = x + muzzle_length*math.cos(self.aim_angle + 0.18)
-        y0 = y + muzzle_length*math.sin(self.aim_angle + 0.18)
+        x0 = x + muzzle_length*math.cos(self.aim_angle + offset)
+        y0 = y + muzzle_length*math.sin(self.aim_angle + offset)
         return x0, y0
 
     def muzzle_center(self):
