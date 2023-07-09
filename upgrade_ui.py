@@ -27,6 +27,8 @@ class UpgradeUI:
             self.subtitle_font.render("but he'll come back even stronger.", 1, (255, 255, 255)),
         ]
 
+        self.hovered = None
+
         self.upgrade_surfs = []
         self.upgrade_name_font = pygame.font.Font("assets/fonts/edge_of_the_galaxy.otf", 27)
         self.upgrade_names = {name:[self.upgrade_name_font.render(line.upper(), 1, (255, 255, 255)) for line in c.UPGRADE_NAMES[name].split()] for name in c.UPGRADE_NAMES}
@@ -56,14 +58,30 @@ class UpgradeUI:
                 if event.key == pygame.K_o:
                     self.raise_up()
 
+        self.update_hover()
+
+    def update_hover(self):
+        mpos = pygame.mouse.get_pos()
+        x = c.WINDOW_WIDTH//2
+        y = c.WINDOW_HEIGHT//2 + 10
+        self.hovered = None
+        for key, up_surf in self.upgrade_surfs:
+            rect = pygame.Rect(x - up_surf.get_width()//2, y - up_surf.get_height()//2, up_surf.get_width(), up_surf.get_height())
+            if rect.collidepoint(*mpos):
+                self.hovered = key
+            y += up_surf.get_height() + 15
+
     def process_click(self):
+        if not self.active:
+            return
         mpos = pygame.mouse.get_pos()
         x = c.WINDOW_WIDTH//2
         y = c.WINDOW_HEIGHT//2 + 10
         for key, up_surf in self.upgrade_surfs:
-            rect = pygame.Rect(x, y, up_surf.get_width(), up_surf.get_height)
+            rect = pygame.Rect(x - up_surf.get_width()//2, y - up_surf.get_height()//2, up_surf.get_width(), up_surf.get_height())
             if rect.collidepoint(*mpos):
                 self.select_upgrade(key)
+            y += up_surf.get_height() + 15
 
     def select_upgrade(self, key):
         self.frame.game.upgrade_levels[key] += 1
@@ -90,6 +108,10 @@ class UpgradeUI:
         x = c.WINDOW_WIDTH//2
         y = c.WINDOW_HEIGHT//2 + 10
         for key, up_surf in self.upgrade_surfs:
+            if key == self.hovered:
+                up_surf.set_alpha(255)
+            else:
+                up_surf.set_alpha(128)
             surf.blit(up_surf, (x - up_surf.get_width()//2, y - up_surf.get_height()//2))
             y += up_surf.get_height() + 15
 
@@ -116,7 +138,6 @@ class UpgradeUI:
             x = 200
             y = surf.get_height()//2 - description.get_height()//2
             surf.blit(description, (x, y))
-
 
             surfs.append((upgrade, surf))
         return surfs

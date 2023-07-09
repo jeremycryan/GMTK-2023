@@ -18,12 +18,13 @@ class Hero(PlatformObject):
         super().__init__(frame, x, y, w, h)
         self.aim_angle = math.pi  # In radians!!!
         self.target_angle = self.aim_angle
-        self.cooldown = HERO_COOLDOWN
+        self.cooldown = HERO_COOLDOWN * 0.75**self.frame.game.upgrade_levels[RATE_OF_FIRE]
         self.aim_time = HERO_AIM_TIME
+        self.spread = SHOT_SPREAD * 0.5**self.frame.game.upgrade_levels[ACCURACY]
         self.clip = 10
         self.target = None
         self.t = 0
-        self.hp = 5
+        self.hp = 5 + self.frame.game.upgrade_levels[HEALTH]
         self.location = None
         self.destination = None
 
@@ -103,6 +104,13 @@ class Hero(PlatformObject):
                 self.cooldown = HERO_COOLDOWN
                 self.shoot()
 
+        if self.facing_left():
+            self.sprite.start_animation("idle_left", restart_if_active=False)
+            self.arm_sprite.start_animation("aiming_left", restart_if_active=False)
+        else:
+            self.sprite.start_animation("idle_right", restart_if_active=False)
+            self.arm_sprite.start_animation("aiming_right", restart_if_active=False)
+
     def muzzle(self):
         """ Location of end of gun """
         x, y = self.muzzle_center()
@@ -135,8 +143,8 @@ class Hero(PlatformObject):
             arm_offset = (30, 5)
             arm_surf = pygame.transform.rotate(arm_surf, math.degrees(-self.aim_angle + math.pi))
         else:
-            arm_offset = (-40, 22)
-            arm_surf = pygame.transform.rotate(arm_surf, math.degrees(-self.aim_angle + math.pi))
+            arm_offset = (30, -5)
+            arm_surf = pygame.transform.rotate(arm_surf, math.degrees(-self.aim_angle))
         angle = -self.aim_angle
         arm_offset = math.cos(angle) * arm_offset[0] + math.sin(angle)*arm_offset[1], \
                      math.cos(angle)*arm_offset[1] - math.sin(angle)*arm_offset[0]
@@ -165,7 +173,7 @@ class Hero(PlatformObject):
         """ Launch a projectile """
         self.vx -= math.cos(self.aim_angle) * RECOIL
         x, y = self.muzzle()
-        angle = self.aim_angle + random.random() * math.radians(SHOT_SPREAD) * 2 - math.radians(SHOT_SPREAD)
+        angle = self.aim_angle + random.random() * math.radians(self.spread) * 2 - math.radians(self.spread)
         dx, dy = math.sin(self.aim_angle), -math.cos(self.aim_angle)
         d = (random.random() - .5) * 2 * SHOT_JITTER
         self.frame.projectiles.append(Projectile(self.frame, x + dx * d, y + dy * d, angle))
