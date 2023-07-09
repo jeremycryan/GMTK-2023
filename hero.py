@@ -46,19 +46,19 @@ class Hero(PlatformObject):
         SoundManager.load("assets/audio/man_landing_thud.ogg")
 
         self.sprite = Sprite(12)
-        idle = Animation(ImageManager.load("assets/images/man run temp 6fps.png", 0.5), (4, 1), 4)
-        idle_right = Animation(ImageManager.load("assets/images/man run temp 6fps.png", 0.5), (4, 1), 4, reverse_x=True)
+        idle = Animation(ImageManager.load("assets/images/man run 12fps.png", 0.5), (4, 1), 4)
+        idle_right = Animation(ImageManager.load("assets/images/man run 12fps.png", 0.5), (4, 1), 4, reverse_x=True)
         jump = Animation(ImageManager.load("assets/images/man jump 6fps.png", 0.5), (2, 1), 2)
         jump_right = Animation(ImageManager.load("assets/images/man jump 6fps.png", 0.5), (2, 1), 2, reverse_x=True)
-        fall = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1)
-        fall_right = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        fall = Animation(ImageManager.load("assets/images/man fall 6fps.png", 0.5), (2, 1), 2)
+        fall_right = Animation(ImageManager.load("assets/images/man fall 6fps.png", 0.5), (2, 1), 2, reverse_x=True)
         death = Animation(ImageManager.load("assets/images/man death temp.png", 0.5), (2, 1), 2)
         death_right = Animation(ImageManager.load("assets/images/man death temp.png", 0.5), (2, 1), 2, reverse_x=True)
         self.sprite.add_animation({
-            "fall_left": fall,
-            "fall_right": fall_right,
         })
         self.sprite.add_animation({
+            "fall_left": fall,
+            "fall_right": fall_right,
             "idle_left": idle,
             "idle_right": idle_right,
             "jump_left": jump,

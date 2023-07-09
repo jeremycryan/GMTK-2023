@@ -124,7 +124,9 @@ class Frame(FrameBase):
         self.zombie_sound_timer += math.sqrt(max(4, len(self.zombies)) * dt/1000)
         if self.zombie_sound_timer > 1 + random.random() * 1:
             i = random.randint(1, 5)
-            SoundManager.load(f"assets/audio/ZR_idle_{i}.ogg").play()
+            sound = SoundManager.load(f"assets/audio/ZR_idle_{i}.ogg")
+            sound.set_volume(0.2)
+            sound.play()
             self.zombie_sound_timer = 0
         if self.level_end or self.victory:
             self.level_end_timer += dt

@@ -178,7 +178,9 @@ class Zombie(PlatformObject):
             else:
                 self.sprite.start_animation("fling_right")
             i = random.randint(1, 7)
-            SoundManager.load(f"assets/audio/ZR_launch_{i}.ogg").play()
+            sound = SoundManager.load(f"assets/audio/ZR_launch_{i}.ogg")
+            sound.set_volume(0.6)
+            sound.play()
         else:
             self.sprite.start_animation("falling_left")
         self.state = Zombie.BALLISTIC
