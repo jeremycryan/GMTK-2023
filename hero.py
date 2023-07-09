@@ -6,6 +6,7 @@ import pygame.draw
 from constants import *
 from grid import Tile
 from image_manager import ImageManager
+from particle import Death
 from platform_object import PlatformObject
 from projectile import Projectile
 
@@ -46,19 +47,19 @@ class Hero(PlatformObject):
         SoundManager.load("assets/audio/man_landing_thud.ogg")
 
         self.sprite = Sprite(12)
-        idle = Animation(ImageManager.load("assets/images/man run temp 6fps.png", 0.5), (4, 1), 4)
-        idle_right = Animation(ImageManager.load("assets/images/man run temp 6fps.png", 0.5), (4, 1), 4, reverse_x=True)
+        idle = Animation(ImageManager.load("assets/images/man run 12fps.png", 0.5), (4, 1), 4)
+        idle_right = Animation(ImageManager.load("assets/images/man run 12fps.png", 0.5), (4, 1), 4, reverse_x=True)
         jump = Animation(ImageManager.load("assets/images/man jump 6fps.png", 0.5), (2, 1), 2)
         jump_right = Animation(ImageManager.load("assets/images/man jump 6fps.png", 0.5), (2, 1), 2, reverse_x=True)
-        fall = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1)
-        fall_right = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        fall = Animation(ImageManager.load("assets/images/man fall 6fps.png", 0.5), (2, 1), 2)
+        fall_right = Animation(ImageManager.load("assets/images/man fall 6fps.png", 0.5), (2, 1), 2, reverse_x=True)
         death = Animation(ImageManager.load("assets/images/man death temp.png", 0.5), (2, 1), 2)
         death_right = Animation(ImageManager.load("assets/images/man death temp.png", 0.5), (2, 1), 2, reverse_x=True)
         self.sprite.add_animation({
-            "fall_left": fall,
-            "fall_right": fall_right,
         })
         self.sprite.add_animation({
+            "fall_left": fall,
+            "fall_right": fall_right,
             "idle_left": idle,
             "idle_right": idle_right,
             "jump_left": jump,
@@ -84,7 +85,8 @@ class Hero(PlatformObject):
 
     def on_become_grounded(self):
         super().on_become_grounded()
-        SoundManager.load("assets/audio/man_landing_thud.ogg").play()
+        sound = SoundManager.load("assets/audio/man_landing_thud.ogg")
+        sound.set_volume(0.5)
         self.frame.shake(8)
 
     def facing_left(self):
@@ -98,6 +100,7 @@ class Hero(PlatformObject):
         # Remove if dead
         if self.hp <= 0:
             self.frame.heros.remove(self)
+            self.frame.particles.append(Death((self.x, self.y)))
             # TODO: death animation
             SoundManager.load("assets/audio/man_death.ogg").play()
             # SoundManager.load("assets/audio/man_dying_breaths.ogg").play()
@@ -154,7 +157,7 @@ class Hero(PlatformObject):
             if self.cooldown <= 0 and self.target:
                 self.cooldown = self.base_cooldown
                 if self.frame.game.upgrade_levels[LEFTY]:
-                    if self.facing_left():
+                    if not self.facing_left():
                         self.cooldown /= 2
                     else:
                         self.cooldown *= 2

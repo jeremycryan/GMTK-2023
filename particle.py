@@ -76,3 +76,26 @@ class Land(Particle):
         x = self.x - img.get_width()//2
         y = self.y - img.get_height()//2
         surf.blit(img, (x + offset[0], y + offset[1]))
+
+class Death(Particle):
+    def __init__(self, position):
+        super().__init__(1000, position, (0, 0))
+        self.x = position[0]
+        self.y = position[1]
+        self.sprite = Sprite(6, position)
+        self.sprite.add_animation({
+            "base": Animation(ImageManager.load("assets/images/man dying 24fps.png", 0.5), (2, 1), 2),
+            "dead": Animation(ImageManager.load("assets/images/man death 0fps.png", 0.5), (1, 1), 1)
+        }, loop=True)
+        self.sprite.start_animation("base")
+
+    def update(self, dt, events):
+        super().update(dt, events)
+        self.sprite.update(dt, events)
+        if self.age > 2:
+            self.sprite.start_animation("dead")
+
+    def draw(self, surf, offset=(0, 0)):
+        self.sprite.x = self.x + offset[0]
+        self.sprite.y = self.y + offset[1]
+        self.sprite.draw(surf, offset)

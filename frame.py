@@ -76,6 +76,8 @@ class Frame(FrameBase):
         self.midbar.fill((0, 0, 0))
         self.midbar.set_alpha(160)
 
+        self.since_hero_dead = 0
+
     def load_zombies(self):
         self.spawner_count = 0
         if self.level == 1:
@@ -137,7 +139,9 @@ class Frame(FrameBase):
         self.zombie_sound_timer += math.sqrt(max(4, len(self.zombies)) * dt/1000)
         if self.zombie_sound_timer > 1 + random.random() * 1:
             i = random.randint(1, 5)
-            SoundManager.load(f"assets/audio/ZR_idle_{i}.ogg").play()
+            sound = SoundManager.load(f"assets/audio/ZR_idle_{i}.ogg")
+            sound.set_volume(0.2)
+            sound.play()
             self.zombie_sound_timer = 0
         if self.level_end or self.victory:
             self.level_end_timer += dt
@@ -177,7 +181,9 @@ class Frame(FrameBase):
         for projectile in self.projectiles[:]:
             projectile.update(dt, events)
         self.background.update(dt, events)
-        if not len(self.heros) and not self.complete:
+        if len(self.heros) == 0:
+            self.since_hero_dead += dt
+        if not len(self.heros) and not self.complete and self.since_hero_dead > 3:
             self.upgrade_ui.raise_up()
             self.complete = True
 
@@ -258,8 +264,9 @@ class GameOverFrame(Frame):
 
     def update(self, dt, events):
         for event in events:
-            if event.type == pygame.K_r:
-                self.done = True
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    self.done = True
         pass
 
     def next_frame(self):

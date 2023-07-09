@@ -17,6 +17,10 @@ class Game:
         ImageManager.init()
         self.upgrade_levels = {key: 0 for key in c.UPGRADE_NAMES}
 
+        pygame.mixer.music.load("assets/audio/game track.ogg")
+        pygame.mixer.music.set_volume(0.25)
+        pygame.mixer.music.play(-1)
+
         asyncio.run(self.main())
 
     def get_upgrade_level(self, key):
