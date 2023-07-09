@@ -51,3 +51,18 @@ RIGHT = (1, 0)
 DOWN_LEFT = (-1, 1)
 DOWN = (0, 1)
 DOWN_RIGHT = (1, 0)
+
+# Upgrades
+HEALTH = 0
+RATE_OF_FIRE = 1
+
+UPGRADE_NAMES = {
+    HEALTH: "Thick skin",
+    RATE_OF_FIRE: "Trigger lubricant",
+}
+
+UPGRADE_DESCRIPTIONS = {
+    HEALTH: "The hero's health is increased.",
+    RATE_OF_FIRE: "The hero shoots more rapidly.",
+}
+
