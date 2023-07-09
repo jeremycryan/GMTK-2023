@@ -51,6 +51,7 @@ class Frame(FrameBase):
         self.complete = False
         self.victory = False
         self.level_end = False
+        self.level_end_timer = 0
         self.stage_clear_font = pygame.font.Font("assets/fonts/edge_of_the_galaxy.otf", 70)
         self.stage_clear_text = self.stage_clear_font.render("Stage Cleared!", True, (255, 255, 255))
         self.victory_text = self.stage_clear_font.render("Victory!", True, (255, 255, 255))
@@ -75,8 +76,12 @@ class Frame(FrameBase):
                     self.done = True
                     if self.victory:
                         self.level = 1
+                        self.game.upgrade_levels = {key: 0 for key in UPGRADE_NAMES}
 
         if self.level_end or self.victory:
+            self.level_end_timer += dt
+            if not self.victory and self.level_end_timer > 1:
+                self.done = True
             return
         self.upgrade_ui.update(dt, events)
         self.toss_ui.update(dt, events)

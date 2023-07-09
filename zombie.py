@@ -30,14 +30,14 @@ class Zombie(PlatformObject):
         self.dead = False
 
         scale_by = 0.5
-        fling = Animation(ImageManager.load("assets/images/ZR Throw temp.png", scale_by=scale_by), (1, 1), 1)
-        fling_right = Animation(ImageManager.load("assets/images/ZR Throw temp.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
-        idle = Animation(ImageManager.load("assets/images/ZR Idle temp.png", scale_by=scale_by), (1, 1), 1)
-        idle_right = Animation(ImageManager.load("assets/images/ZR Idle temp.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
-        hold = Animation(ImageManager.load("assets/images/ZR held temp.png", scale_by=scale_by), (2, 1), 2)
-        hold_right = Animation(ImageManager.load("assets/images/ZR held temp.png", scale_by=scale_by), (2, 1), 2, reverse_x=True)
-        falling = Animation(ImageManager.load("assets/images/ZR Fall Temp.png", scale_by=scale_by), (1, 1), 1)
-        falling_right = Animation(ImageManager.load("assets/images/ZR Fall Temp.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
+        fling = Animation(ImageManager.load("assets/images/ZR Throw 12fps.png", scale_by=scale_by), (4, 1), 4)
+        fling_right = Animation(ImageManager.load("assets/images/ZR Throw 12fps.png", scale_by=scale_by), (4, 1), 4, reverse_x=True)
+        idle = Animation(ImageManager.load("assets/images/ZR Walk 6fps.png", scale_by=scale_by), (6, 1), 6, time_scaling = .8)
+        idle_right = Animation(ImageManager.load("assets/images/ZR Walk 6fps.png", scale_by=scale_by), (6, 1), 6, reverse_x=True, time_scaling = .8)
+        hold = Animation(ImageManager.load("assets/images/ZR held 12fps.png", scale_by=scale_by), (5, 1), 5)
+        hold_right = Animation(ImageManager.load("assets/images/ZR held 12fps.png", scale_by=scale_by), (5, 1), 5, reverse_x=True)
+        falling = Animation(ImageManager.load("assets/images/ZR Fall 6fps.png", scale_by=scale_by), (2, 1), 2)
+        falling_right = Animation(ImageManager.load("assets/images/ZR Fall 6fps.png", scale_by=scale_by), (2, 1), 2, reverse_x=True)
         land = Animation(ImageManager.load("assets/images/ZR Land Temp.png", scale_by=scale_by), (1, 1), 1)
         land_right = Animation(ImageManager.load("assets/images/ZR Land Temp.png", scale_by=scale_by), (1, 1), 1, reverse_x=True)
         self.sprite.add_animation(
