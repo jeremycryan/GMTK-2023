@@ -49,9 +49,10 @@ class Projectile:
             if zombie in self.zombies_hit:
                 continue
             if self.collide_zombie(zombie):
-                zombie.vx += self.vx * BULLET_FORCE
+                knock = self.frame.game.upgrade_levels[KNOCK]*2 + 1
+                zombie.vx += self.vx * BULLET_FORCE * knock
                 if zombie.ballistic:
-                    zombie.vy += self.vy * BULLET_FORCE
+                    zombie.vy += self.vy * BULLET_FORCE * knock
                 vmag = math.sqrt(self.vx**2 + self.vy**2)
                 vnorm = self.vx/vmag, self.vy/vmag
                 self.frame.particles.append(Spatter((zombie.x + vnorm[0]*zombie.r, zombie.y + vnorm[1]*zombie.r), math.degrees(math.atan2(-vnorm[1], vnorm[0]))))
