@@ -14,6 +14,7 @@ class Projectile:
         self.vx = math.cos(angle) * v
         self.vy = math.sin(angle) * v
         self.damage = damage
+        self.zombies_hit = set()
         self.hit = False
         self.explode_time = 0.05
 
@@ -34,12 +35,16 @@ class Projectile:
                 self.hit = True
         # Check for zombie collision
         for zombie in self.frame.zombies:
+            if zombie in self.zombies_hit:
+                continue
             if self.collide_zombie(zombie):
                 zombie.vx += self.vx * BULLET_FORCE
                 if zombie.ballistic:
                     zombie.vy += self.vy * BULLET_FORCE
                 zombie.hit(self.damage)
-                self.hit = True
+                self.zombies_hit.add(zombie)
+                if len(self.zombies_hit) >= self.frame.game.upgrade_levels[PIERCE] + 1:
+                    self.hit = True
 
     def draw(self, surface, offset):
         if self.hit:

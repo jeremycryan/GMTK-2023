@@ -256,7 +256,8 @@ class Grid:
                     py += c.TILE_HEIGHT
                     continue
                 tile_sprite = self.tile_to_surf(*tile_pos) if Tile.AIR not in only else self.tile_surfs[Tile.AIR]
-                dest.blit(tile_sprite, self.snap_up((px, py)))
+                snapped = self.snap_up((px, py))
+                dest.blit(tile_sprite, (snapped[0] + offset[0], snapped[1] + offset[1]))
                 py += c.TILE_HEIGHT
             px += c.TILE_WIDTH
         pass

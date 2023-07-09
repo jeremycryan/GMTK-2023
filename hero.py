@@ -39,6 +39,8 @@ class Hero(PlatformObject):
         jump_right = Animation(ImageManager.load("assets/images/Man Jump temp.png", 0.5), (1, 1), 1, reverse_x=True)
         fall = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1)
         fall_right = Animation(ImageManager.load("assets/images/man fall temp.png", 0.5), (1, 1), 1, reverse_x=True)
+        death = Animation(ImageManager.load("assets/images/man death temp.png", 0.5), (2, 1), 2)
+        death_right = Animation(ImageManager.load("assets/images/man death temp.png", 0.5), (2, 1), 2, reverse_x=True)
         self.sprite.add_animation({
             "jump_left": jump,
             "jump_right": jump_right,
@@ -156,6 +158,8 @@ class Hero(PlatformObject):
             else:
                 self.arm_sprite.start_animation("standby_right", restart_if_active=False)
 
+
+
     def muzzle(self):
         """ Location of end of gun """
         x, y = self.muzzle_center()
@@ -197,8 +201,8 @@ class Hero(PlatformObject):
                      math.cos(angle) * arm_offset[1] - math.sin(angle) * arm_offset[0]
 
         x, y = self.muzzle_center()
-        x += arm_offset[0]
-        y += arm_offset[1]
+        x += arm_offset[0] + offset[0]
+        y += arm_offset[1] + offset[1]
         x -= arm_surf.get_width() // 2
         y -= arm_surf.get_height() // 2
         surface.blit(arm_surf, (x, y))
@@ -215,7 +219,7 @@ class Hero(PlatformObject):
                 surf = ImageManager.load("assets/images/heart full.png", 0.3)
             else:
                 surf = ImageManager.load("assets/images/heart empty.png", 0.3)
-            surface.blit(surf, (x, y))
+            surface.blit(surf, (x + offset[0], y + offset[1]))
             x -= spacing
 
     def raycast(self, origin, angle, step=5, max_length=2000):
@@ -228,6 +232,7 @@ class Hero(PlatformObject):
 
     def shoot(self):
         """ Launch a projectile """
+        self.frame.shake(5)
         self.vx -= math.cos(self.aim_angle) * RECOIL
         x, y = self.muzzle()
         angle = self.aim_angle + random.random() * math.radians(self.spread) * 2 - math.radians(self.spread)
@@ -254,6 +259,7 @@ class Hero(PlatformObject):
         self.hp -= damage
         if self.hp < 0:
             self.hp = 0
+        self.frame.freeze(0.25)
         # TODO: damage animation
 
     def navigate(self):

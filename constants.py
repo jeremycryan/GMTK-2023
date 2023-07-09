@@ -62,6 +62,7 @@ RATE_OF_FIRE = 1
 ACCURACY = 2
 LEFTY = 3
 WALK_SPEED = 4
+PIERCE = 5
 
 UPGRADE_NAMES = {
     HEALTH: "Thick skin",
@@ -69,6 +70,7 @@ UPGRADE_NAMES = {
     ACCURACY: "Contact lenses",
     LEFTY: "Lefty",
     WALK_SPEED: "Comfy footwear",
+    PIERCE: "Sharpened bullets"
 }
 
 UPGRADE_DESCRIPTIONS = {
@@ -77,5 +79,6 @@ UPGRADE_DESCRIPTIONS = {
     ACCURACY: "The hero's shots are more accurate.",
     LEFTY: "More dangerous with left hand;\nless dangerous with right.",
     WALK_SPEED: "The hero can move faster.",
+    PIERCE: "Shots can pierce through monsters."
 }
-MAX_LEVEL = 2
+MAX_LEVEL = 3
