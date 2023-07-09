@@ -134,7 +134,7 @@ class Hero(PlatformObject):
         # Face towards target
         self.flip_timer += dt
         if math.cos(self.aim_angle) * math.cos(self.target_angle) < 0:
-            if self.flip_timer > 0.3:
+            if self.flip_timer > 0.2:
                 self.aim_angle = math.pi - self.aim_angle
                 self.flip_timer = 0
         elif self.target:
